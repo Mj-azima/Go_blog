@@ -1,6 +1,7 @@
 package database
 
 import (
+	"blog/src/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -18,7 +19,7 @@ func ConnectDb() {
 	}
 
 	log.Println("DB connected")
-	err = db.AutoMigrate()
+	err = db.AutoMigrate(&models.Users{}, &models.Posts{})
 	if err != nil {
 		panic(err)
 	}
