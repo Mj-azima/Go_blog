@@ -2,6 +2,7 @@ package main
 
 import (
 	"blog/src/database"
+	"blog/src/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )
@@ -13,6 +14,8 @@ func main() {
 	})
 
 	database.ConnectDb()
+
+	routes.SetUpRoutes(app)
 
 	err := app.Listen(":3000")
 	if err != nil {
