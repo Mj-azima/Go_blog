@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset="UTF-8">
+	<title>Title</title>
 </head>
-    <body>
+<body>
 
-    <p>index page</p>
 
-    </body>
+	{{ if .isLogin }}
+		<form action="/logout" method="POST">
+			<div>
+				<input type="submit" value="logout">
+			</div>
+		</form>
+	{{ else }}
+		<a href="/login">
+			<input type="button" value="login">
+		</a>
+		<a href="/register">
+			<input type="button" value="register">
+		</a>
+	{{ end }}
+
+</body>
 </html>
 
 

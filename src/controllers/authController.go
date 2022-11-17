@@ -89,3 +89,39 @@ func Login(c *fiber.Ctx) error {
 	return c.Redirect("/")
 
 }
+
+func Logout(c *fiber.Ctx) error {
+	store := database.GetSession()
+
+	currSession, err := store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	user := currSession.Get("User")
+	if user != nil {
+		currSession.Delete("User")
+	}
+
+	err = currSession.Save()
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/")
+}
+
+func IsLogin(c *fiber.Ctx) (bool, error) {
+	store := database.GetSession()
+	currSession, err := store.Get(c)
+	if err != nil {
+		return false, err
+	}
+	user := currSession.Get("User")
+	if user == nil {
+		// This request is from a user that is not logged in.
+		// Send them to the login page.
+		return false, nil
+	}
+	return true, nil
+}

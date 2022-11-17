@@ -6,6 +6,6 @@ import (
 
 //Index page controller
 func Index(c *fiber.Ctx) error {
-
-	return c.Render("index", fiber.Map{})
+	isLogin, _ := IsLogin(c)
+	return c.Render("index", fiber.Map{"isLogin": isLogin})
 }

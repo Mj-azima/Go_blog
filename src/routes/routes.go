@@ -17,6 +17,8 @@ func SetUpRoutes(app *fiber.App) {
 
 	//Login page route
 	app.Get("/login", controllers.LoginPage)
+	//Login request route
 	app.Post("/login", controllers.Login)
-
+	//Logout request route
+	app.Post("/logout", controllers.Logout)
 }
