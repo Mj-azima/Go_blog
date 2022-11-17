@@ -35,3 +35,8 @@ func Register(c *fiber.Ctx) error {
 	}
 	return c.Redirect("/login")
 }
+
+func LoginPage(c *fiber.Ctx) error {
+
+	return c.Render("login", fiber.Map{})
+}
