@@ -17,4 +17,6 @@ func SetUpRoutes(app *fiber.App) {
 
 	//Login page route
 	app.Get("/login", controllers.LoginPage)
+	app.Post("/login", controllers.Login)
+
 }

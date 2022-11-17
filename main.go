@@ -14,6 +14,7 @@ func main() {
 	})
 
 	database.ConnectDb()
+	database.SetSession()
 
 	routes.SetUpRoutes(app)
 
