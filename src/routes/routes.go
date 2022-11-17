@@ -5,9 +5,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-//setRoute config
+//SetRoute config
 func SetUpRoutes(app *fiber.App) {
-	//index page route
+	//Index page route
 	app.Get("/", controllers.Index)
 
+	//Register page route
+	app.Get("/register", controllers.RegisterPage)
 }
