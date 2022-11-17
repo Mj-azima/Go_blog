@@ -9,10 +9,12 @@ import (
 	"log"
 )
 
+//Register page controller
 func RegisterPage(c *fiber.Ctx) error {
 	return c.Render("register", fiber.Map{})
 }
 
+//Register request controller
 func Register(c *fiber.Ctx) error {
 	payload := validators.User{}
 
@@ -37,11 +39,13 @@ func Register(c *fiber.Ctx) error {
 	return c.Redirect("/login")
 }
 
+//Login page controller
 func LoginPage(c *fiber.Ctx) error {
 
 	return c.Render("login", fiber.Map{})
 }
 
+//Login request controller
 func Login(c *fiber.Ctx) error {
 
 	payload := validators.User{}
@@ -90,6 +94,7 @@ func Login(c *fiber.Ctx) error {
 
 }
 
+//Logout request controller
 func Logout(c *fiber.Ctx) error {
 	store := database.GetSession()
 
@@ -111,6 +116,7 @@ func Logout(c *fiber.Ctx) error {
 	return c.Redirect("/")
 }
 
+//IsLogin service
 func IsLogin(c *fiber.Ctx) (bool, error) {
 	store := database.GetSession()
 	currSession, err := store.Get(c)

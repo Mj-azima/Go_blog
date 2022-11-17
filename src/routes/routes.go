@@ -2,6 +2,7 @@ package routes
 
 import (
 	"blog/src/controllers"
+	"blog/src/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -21,4 +22,7 @@ func SetUpRoutes(app *fiber.App) {
 	app.Post("/login", controllers.Login)
 	//Logout request route
 	app.Post("/logout", controllers.Logout)
+
+	//Create Post page route
+	app.Get("/post", middlewares.RequireLogin, controllers.CreatePostPage)
 }
