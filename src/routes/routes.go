@@ -12,4 +12,6 @@ func SetUpRoutes(app *fiber.App) {
 
 	//Register page route
 	app.Get("/register", controllers.RegisterPage)
+	//Register request route
+	app.Post("/register", controllers.Register)
 }

@@ -14,7 +14,7 @@ type Post struct {
 	Body string `validate:"required,min=3,max=10000"`
 }
 
-func ValidateStruct(payload interface{}) {
+func ValidateStruct(payload interface{}) error {
 
 	var validate *validator.Validate
 	validate = validator.New()
@@ -28,7 +28,7 @@ func ValidateStruct(payload interface{}) {
 		// value most including myself do not usually have code like this.
 		if _, ok := err.(*validator.InvalidValidationError); ok {
 			fmt.Println(err)
-			return
+
 		}
 
 		for _, err := range err.(validator.ValidationErrors) {
@@ -47,8 +47,10 @@ func ValidateStruct(payload interface{}) {
 		}
 
 		// from here you can create your own error messages in whatever language you wish
-		return
+		return err
 	}
 	println("success!")
+
+	return nil
 
 }
