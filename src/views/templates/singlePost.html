@@ -5,14 +5,14 @@
 	<title>Title</title>
 </head>
 <body>
-	{{ range .posts }}
-	<a href="/singlePost/{{ .ID }}">
-		<p>
-			{{ .Body }}
-		</p>
-	</a>
 
+	<h4>
+		{{ .user.Email }}
+	</h4>
 	<br>
-	{{ end }}
+	<p>
+		{{ .post.Body }}
+	</p>
+
 </body>
 </html>

@@ -98,6 +98,7 @@ func UpdatePost(c *fiber.Ctx) error {
 	return c.SendString("Post Updated!")
 }
 
+//Get all Posts page controller
 func Posts(c *fiber.Ctx) error {
 	var posts []models.Posts
 	result := database.DBConn.Find(&posts)
@@ -106,4 +107,22 @@ func Posts(c *fiber.Ctx) error {
 	}
 
 	return c.Render("postsList", fiber.Map{"posts": posts})
+}
+
+//Get signle post page controller
+func SinglePost(c *fiber.Ctx) error {
+	postId := c.Params("id")
+	var post models.Posts
+
+	if err := database.DBConn.First(&post, postId).Error; err != nil {
+		return err
+	}
+	var user models.Users
+
+	if err := database.DBConn.First(&user, post.Auther).Error; err != nil {
+		return err
+	}
+
+	return c.Render("singlePost", fiber.Map{"post": post, "user": user})
+
 }
