@@ -78,20 +78,24 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	store := database.GetSession()
+	//store := database.GetSession()
+	//
+	//currSession, err := store.Get(c)
+	//if err != nil {
+	//	return err
+	//}
+	//err = currSession.Regenerate()
+	//if err != nil {
+	//	return err
+	//}
+	//currSession.Set("User", fiber.Map{"Email": user.Email})
+	//err = currSession.Save()
+	//if err != nil {
+	//	panic(err)
+	//}
 
-	currSession, err := store.Get(c)
-	if err != nil {
+	if err := Session.Generate(c, user.Email); err != nil {
 		return err
-	}
-	err = currSession.Regenerate()
-	if err != nil {
-		return err
-	}
-	currSession.Set("User", fiber.Map{"Email": user.Email})
-	err = currSession.Save()
-	if err != nil {
-		panic(err)
 	}
 
 	return c.Redirect("/")
@@ -100,21 +104,28 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 
 //Logout request controller
 func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
-	store := database.GetSession()
+	//store := database.GetSession()
+	//currSession, err := store.Get(c)
+	//if err != nil {
+	//	return err
+	//}
+	//user := currSession.Get("User")
 
-	currSession, err := store.Get(c)
-	if err != nil {
+	//user,err := Session.Get(c)
+	//if err != nil {
+	//	return err
+	//}
+
+	//if user != nil {
+	//	currSession.Delete("User")
+	//}
+
+	//err = currSession.Save()
+	//if err != nil {
+	//	panic(err)
+	//}
+	if err := Session.Delete(c); err != nil {
 		return err
-	}
-
-	user := currSession.Get("User")
-	if user != nil {
-		currSession.Delete("User")
-	}
-
-	err = currSession.Save()
-	if err != nil {
-		panic(err)
 	}
 
 	return c.Redirect("/")
@@ -122,16 +133,25 @@ func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
 
 //IsLogin service
 func IsLogin(c *fiber.Ctx) (bool, error) {
-	store := database.GetSession()
-	currSession, err := store.Get(c)
-	if err != nil {
-		return false, err
-	}
-	user := currSession.Get("User")
+	//store := database.GetSession()
+	//currSession, err := store.Get(c)
+	//if err != nil {
+	//	return false, err
+	//}
+	//user := currSession.Get("User")
+
+	user, _ := Session.Get(c)
 	if user == nil {
 		// This request is from a user that is not logged in.
 		// Send them to the login page.
 		return false, nil
 	}
 	return true, nil
+}
+
+var Session *database.Session
+
+func init() {
+	Session = new(database.Session)
+	Session.SetSession()
 }
