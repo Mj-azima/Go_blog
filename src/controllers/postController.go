@@ -55,6 +55,7 @@ func CreatePost(c *fiber.Ctx) error {
 	return c.SendString("post created !")
 }
 
+//Update post page controller
 func UpdatePostPage(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
@@ -69,4 +70,30 @@ func UpdatePostPage(c *fiber.Ctx) error {
 	}
 
 	return c.Render("updatePost", fiber.Map{"post": post})
+}
+
+//Update post request controller
+func UpdatePost(c *fiber.Ctx) error {
+	payload := validators.Post{}
+	postId := c.Params("id")
+
+	if err := c.BodyParser(&payload); err != nil {
+		return err
+	}
+
+	if err := validators.ValidateStruct(payload); err != nil {
+		return err
+	}
+
+	var post models.Posts
+	result := database.DBConn.Find(&post, postId)
+	if result.Error != nil {
+		return result.Error
+	}
+	result = database.DBConn.Model(&post).Update("Body", payload.Body)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return c.SendString("Post Updated!")
 }
