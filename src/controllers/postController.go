@@ -97,3 +97,13 @@ func UpdatePost(c *fiber.Ctx) error {
 
 	return c.SendString("Post Updated!")
 }
+
+func Posts(c *fiber.Ctx) error {
+	var posts []models.Posts
+	result := database.DBConn.Find(&posts)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return c.Render("postsList", fiber.Map{"posts": posts})
+}

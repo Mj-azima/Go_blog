@@ -33,4 +33,7 @@ func SetUpRoutes(app *fiber.App) {
 	//Update Post request route
 	app.Post("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, controllers.UpdatePost)
 
+	//Get all posts
+	app.Get("/posts", controllers.Posts)
+
 }
