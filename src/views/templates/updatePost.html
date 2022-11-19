@@ -11,6 +11,13 @@
 		<br>
 		<input type="submit" value="Submit">
 	</form>
+
+	<br>
+
+	<form action="/post/delete/{{ .post.ID }}" method="post">
+		<input type="hidden" name="delete" value="delete">
+		<input type="submit" value="Delete">
+	</form>
 	<!-- JavaScript Bundle with Popper -->
 
 </html>

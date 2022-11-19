@@ -126,3 +126,13 @@ func SinglePost(c *fiber.Ctx) error {
 	return c.Render("singlePost", fiber.Map{"post": post, "user": user})
 
 }
+
+//Delete post request controller
+func DeletePost(c *fiber.Ctx) error {
+	postId := c.Params("id")
+	var post models.Posts
+	if err := database.DBConn.Delete(&post, postId).Error; err != nil {
+		return err
+	}
+	return c.SendString("post Deleted!")
+}
