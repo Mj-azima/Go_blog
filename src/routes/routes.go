@@ -10,9 +10,9 @@ import (
 func SetUpRoutes(app *fiber.App) {
 
 	//Index
-	indStr := new(controllers.IndexStruct)
+	indexStruct := new(controllers.IndexStruct)
 	//Index page route
-	app.Get("/", indStr.Index)
+	app.Get("/", indexStruct.Index)
 
 	//Authentication
 	authStruct := new(controllers.AuthenticationStruct)
@@ -28,21 +28,23 @@ func SetUpRoutes(app *fiber.App) {
 	//Logout request route
 	app.Post("/logout", authStruct.Logout)
 
+	//Post
+	postStruct := new(controllers.PostStruct)
 	//Create Post page route
-	app.Get("/post", middlewares.RequireLogin, controllers.CreatePostPage)
+	app.Get("/post", middlewares.RequireLogin, postStruct.CreatePostPage)
 	//Create Post request route
-	app.Post("/post", middlewares.RequireLogin, controllers.CreatePost)
+	app.Post("/post", middlewares.RequireLogin, postStruct.CreatePost)
 
 	//Update Post page route
-	app.Get("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, controllers.UpdatePostPage)
+	app.Get("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, postStruct.UpdatePostPage)
 	//Update Post request route
-	app.Post("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, controllers.UpdatePost)
+	app.Post("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, postStruct.UpdatePost)
 
 	//Get all posts page
-	app.Get("/posts", controllers.Posts)
+	app.Get("/posts", postStruct.Posts)
 	//Get single post page
-	app.Get("/singlePost/:id", controllers.SinglePost)
+	app.Get("/singlePost/:id", postStruct.SinglePost)
 
 	//Delete post request
-	app.Post("/post/delete/:id", middlewares.RequireLogin, middlewares.IsAuthor, controllers.DeletePost)
+	app.Post("/post/delete/:id", middlewares.RequireLogin, middlewares.IsAuthor, postStruct.DeletePost)
 }

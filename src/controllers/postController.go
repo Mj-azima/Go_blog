@@ -8,14 +8,17 @@ import (
 	"log"
 )
 
+type PostStruct struct {
+}
+
 //Create post Page controller
-func CreatePostPage(c *fiber.Ctx) error {
+func (p *PostStruct) CreatePostPage(c *fiber.Ctx) error {
 
 	return c.Render("createPost", fiber.Map{})
 }
 
 //Create post request controller
-func CreatePost(c *fiber.Ctx) error {
+func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -56,7 +59,7 @@ func CreatePost(c *fiber.Ctx) error {
 }
 
 //Update post page controller
-func UpdatePostPage(c *fiber.Ctx) error {
+func (p *PostStruct) UpdatePostPage(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	var post models.Posts
@@ -73,7 +76,7 @@ func UpdatePostPage(c *fiber.Ctx) error {
 }
 
 //Update post request controller
-func UpdatePost(c *fiber.Ctx) error {
+func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 	postId := c.Params("id")
 
@@ -99,7 +102,7 @@ func UpdatePost(c *fiber.Ctx) error {
 }
 
 //Get all Posts page controller
-func Posts(c *fiber.Ctx) error {
+func (p *PostStruct) Posts(c *fiber.Ctx) error {
 	var posts []models.Posts
 	result := database.DBConn.Find(&posts)
 	if result.Error != nil {
@@ -110,7 +113,7 @@ func Posts(c *fiber.Ctx) error {
 }
 
 //Get signle post page controller
-func SinglePost(c *fiber.Ctx) error {
+func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 	var post models.Posts
 
@@ -128,7 +131,7 @@ func SinglePost(c *fiber.Ctx) error {
 }
 
 //Delete post request controller
-func DeletePost(c *fiber.Ctx) error {
+func (p *PostStruct) DeletePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 	var post models.Posts
 	if err := database.DBConn.Delete(&post, postId).Error; err != nil {
