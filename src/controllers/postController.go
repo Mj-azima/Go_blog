@@ -54,3 +54,19 @@ func CreatePost(c *fiber.Ctx) error {
 
 	return c.SendString("post created !")
 }
+
+func UpdatePostPage(c *fiber.Ctx) error {
+	postId := c.Params("id")
+
+	var post models.Posts
+	result := database.DBConn.Find(&post, postId)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return c.SendString("post not found")
+	}
+
+	return c.Render("updatePost", fiber.Map{"post": post})
+}

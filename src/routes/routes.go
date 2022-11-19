@@ -26,5 +26,9 @@ func SetUpRoutes(app *fiber.App) {
 	//Create Post page route
 	app.Get("/post", middlewares.RequireLogin, controllers.CreatePostPage)
 	//Create Post request route
-	app.Post("/post", controllers.CreatePost)
+	app.Post("/post", middlewares.RequireLogin, controllers.CreatePost)
+
+	//Update Post page route
+	app.Get("/post/:id", middlewares.RequireLogin, middlewares.IsAuthor, controllers.UpdatePostPage)
+
 }
