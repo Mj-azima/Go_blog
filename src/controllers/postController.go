@@ -29,13 +29,18 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	store := database.GetSession()
+	//store := database.GetSession()
+	//
+	//currSession, err := store.Get(c)
+	//if err != nil {
+	//	return err
+	//}
+	//usersess := currSession.Get("User").(fiber.Map)
 
-	currSession, err := store.Get(c)
+	usersess, err := Session.Get(c)
 	if err != nil {
 		return err
 	}
-	usersess := currSession.Get("User").(fiber.Map)
 
 	var user models.Users
 
