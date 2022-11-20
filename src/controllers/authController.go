@@ -4,6 +4,7 @@ import (
 	"blog/src/database"
 	"blog/src/models"
 	"blog/src/validators"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -140,11 +141,14 @@ func IsLogin(c *fiber.Ctx) (bool, error) {
 	//}
 	//user := currSession.Get("User")
 
-	user, _ := Session.Get(c)
-	if user == nil {
+	_, err := Session.Get(c)
+	if err == fmt.Errorf("do not found session") {
 		// This request is from a user that is not logged in.
 		// Send them to the login page.
 		return false, nil
+	}
+	if err != nil {
+		return false, err
 	}
 	return true, nil
 }

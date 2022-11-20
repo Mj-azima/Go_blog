@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"time"
@@ -51,8 +52,13 @@ func (s *Session) Get(c *fiber.Ctx) (fiber.Map, error) {
 	if err != nil {
 		return fiber.Map{}, err
 	}
-	user := currSession.Get("User").(fiber.Map)
-	return user, nil
+	user := currSession.Get("User")
+
+	if user == nil {
+		err := fmt.Errorf("do not found session")
+		return fiber.Map{}, err
+	}
+	return user.(fiber.Map), nil
 }
 
 func (s *Session) Delete(c *fiber.Ctx) error {
