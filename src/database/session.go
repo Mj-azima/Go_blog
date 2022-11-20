@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"time"
@@ -46,17 +45,16 @@ func (s *Session) Generate(c *fiber.Ctx, email string) error {
 	return nil
 }
 
-func (s *Session) Get(c *fiber.Ctx) (fiber.Map, error) {
+func (s *Session) Get(c *fiber.Ctx) (any, error) {
 	store := s.store
 	currSession, err := store.Get(c)
 	if err != nil {
-		return fiber.Map{}, err
+		return nil, err
 	}
 	user := currSession.Get("User")
 
 	if user == nil {
-		err := fmt.Errorf("do not found session")
-		return fiber.Map{}, err
+		return nil, nil
 	}
 	return user.(fiber.Map), nil
 }

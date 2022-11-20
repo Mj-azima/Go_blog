@@ -43,7 +43,7 @@ func IsAuthor(c *fiber.Ctx) error {
 	}
 
 	var user models.Users
-	database.DBConn.Find(&user, "email = ?", usersess["Email"])
+	database.DBConn.Find(&user, "email = ?", usersess.(fiber.Map)["Email"])
 
 	var post models.Posts
 	database.DBConn.Find(&post, "auther = ? AND id = ?", user.ID, postId)

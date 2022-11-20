@@ -3,9 +3,11 @@ package controllers
 import (
 	"blog/src/database"
 	"blog/src/models"
+	"blog/src/repositories"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
 	"log"
+	"strconv"
 )
 
 type PostStruct struct {
@@ -44,20 +46,24 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 
 	var user models.Users
 
-	result := database.DBConn.Find(&user, "email = ?", usersess["Email"])
+	result := database.DBConn.Find(&user, "email = ?", (usersess).(fiber.Map)["Email"])
 
 	if result.Error != nil {
 		log.Fatal("not found a user")
 		return result.Error
 	}
 
-	post := models.Posts{
-		Auther: user.ID,
-		Body:   payload.Body,
-	}
-	tx := database.DBConn.Create(&post)
-	if tx.Error != nil {
-		return tx.Error
+	//post := models.Posts{
+	//	Auther: user.ID,
+	//	Body:   payload.Body,
+	//}
+	//tx := database.DBConn.Create(&post)
+	//if tx.Error != nil {
+	//	return tx.Error
+	//}
+
+	if err := postModel.Create(user.ID, payload.Body); err != nil {
+		return err
 	}
 
 	return c.SendString("post created !")
@@ -108,21 +114,31 @@ func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 
 //Get all Posts page controller
 func (p *PostStruct) Posts(c *fiber.Ctx) error {
-	var posts []models.Posts
-	result := database.DBConn.Find(&posts)
-	if result.Error != nil {
-		return result.Error
+	//var posts []models.Posts
+	//result := database.DBConn.Find(&posts)
+	//if result.Error != nil {
+	//	return result.Error
+	//}
+	//
+	posts, err := postModel.GetAll()
+	if err != nil {
+		return err
 	}
-
 	return c.Render("postsList", fiber.Map{"posts": posts})
 }
 
 //Get signle post page controller
 func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
-	var post models.Posts
 
-	if err := database.DBConn.First(&post, postId).Error; err != nil {
+	//var post models.Posts
+	//
+	//if err := database.DBConn.First(&post, postId).Error; err != nil {
+	//	return err
+	//}
+	id, _ := strconv.Atoi(postId) // type check
+	post, err := postModel.Get(id)
+	if err != nil {
 		return err
 	}
 	var user models.Users
@@ -143,4 +159,10 @@ func (p *PostStruct) DeletePost(c *fiber.Ctx) error {
 		return err
 	}
 	return c.SendString("post Deleted!")
+}
+
+var postModel *repositories.Post
+
+func init() {
+	postModel = new(repositories.Post)
 }
