@@ -30,12 +30,17 @@ func RequireLogin(c *fiber.Ctx) error {
 func IsAuthor(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
-	store := database.GetSession()
-	currSession, err := store.Get(c)
+	//store := database.GetSession()
+	//currSession, err := store.Get(c)
+	//if err != nil {
+	//	return err
+	//}
+	//usersess := currSession.Get("User").(fiber.Map)
+
+	usersess, err := Session.Get(c)
 	if err != nil {
 		return err
 	}
-	usersess := currSession.Get("User").(fiber.Map)
 
 	var user models.Users
 	database.DBConn.Find(&user, "email = ?", usersess["Email"])
@@ -44,4 +49,11 @@ func IsAuthor(c *fiber.Ctx) error {
 	database.DBConn.Find(&post, "auther = ? AND id = ?", user.ID, postId)
 
 	return c.Next()
+}
+
+var Session *database.Session
+
+func init() {
+	Session = new(database.Session)
+	Session.SetSession()
 }
