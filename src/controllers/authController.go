@@ -94,6 +94,8 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 	//	panic(err)
 	//}
 
+	Session := database.Instance
+
 	if err := Session.Generate(c, user.Email); err != nil {
 		return err
 	}
@@ -124,6 +126,8 @@ func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
 	//if err != nil {
 	//	panic(err)
 	//}
+	Session := database.Instance
+
 	if err := Session.Delete(c); err != nil {
 		return err
 	}
@@ -139,6 +143,7 @@ func IsLogin(c *fiber.Ctx) (bool, error) {
 	//	return false, err
 	//}
 	//user := currSession.Get("User")
+	Session := database.Instance
 
 	user, err := Session.Get(c)
 	if err != nil {
@@ -153,9 +158,9 @@ func IsLogin(c *fiber.Ctx) (bool, error) {
 	return true, nil
 }
 
-var Session *database.Session
-
-func init() {
-	Session = new(database.Session)
-	Session.SetSession()
-}
+//var Session *database.Session
+//
+//func init() {
+//	Session = new(database.Session)
+//	Session.SetSession()
+//}

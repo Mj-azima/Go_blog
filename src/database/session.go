@@ -72,3 +72,9 @@ func (s *Session) Delete(c *fiber.Ctx) error {
 	}
 	return nil
 }
+
+var Instance *Session
+
+func init() {
+	Instance = new(Session)
+}

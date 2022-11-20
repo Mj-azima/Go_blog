@@ -36,6 +36,7 @@ func IsAuthor(c *fiber.Ctx) error {
 	//	return err
 	//}
 	//usersess := currSession.Get("User").(fiber.Map)
+	Session := database.Instance
 
 	usersess, err := Session.Get(c)
 	if err != nil {
@@ -51,9 +52,9 @@ func IsAuthor(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-var Session *database.Session
+//var Session *database.Session
 
-func init() {
-	Session = new(database.Session)
-	Session.SetSession()
-}
+//func init() {
+//	Session = new(database.Session)
+//	database.InstanseSession()
+//}

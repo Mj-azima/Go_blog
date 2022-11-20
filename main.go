@@ -14,6 +14,9 @@ func main() {
 	})
 
 	database.ConnectDb()
+	Session := database.Instance
+	Session.SetSession()
+
 	routes.SetUpRoutes(app)
 
 	err := app.Listen(":3000")

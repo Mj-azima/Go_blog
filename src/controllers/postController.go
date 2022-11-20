@@ -38,6 +38,7 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 	//	return err
 	//}
 	//usersess := currSession.Get("User").(fiber.Map)
+	Session := database.Instance
 
 	usersess, err := Session.Get(c)
 	if err != nil {
@@ -99,14 +100,18 @@ func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	var post models.Posts
-	result := database.DBConn.Find(&post, postId)
-	if result.Error != nil {
-		return result.Error
-	}
-	result = database.DBConn.Model(&post).Update("Body", payload.Body)
-	if result.Error != nil {
-		return result.Error
+	//var post models.Posts
+	//result := database.DBConn.Find(&post, postId)
+	//if result.Error != nil {
+	//	return result.Error
+	//}
+	//result = database.DBConn.Model(&post).Update("Body", payload.Body)
+	//if result.Error != nil {
+	//	return result.Error
+	//}
+	id, _ := strconv.Atoi(postId) // type check
+	if err := postModel.Edit(id, payload.Body); err != nil {
+		return err
 	}
 
 	return c.SendString("Post Updated!")
@@ -154,10 +159,15 @@ func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 //Delete post request controller
 func (p *PostStruct) DeletePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
-	var post models.Posts
-	if err := database.DBConn.Delete(&post, postId).Error; err != nil {
+	//var post models.Posts
+	//if err := database.DBConn.Delete(&post, postId).Error; err != nil {
+	//	return err
+	//}
+	id, _ := strconv.Atoi(postId) // type check
+	if err := postModel.Delete(id); err != nil {
 		return err
 	}
+
 	return c.SendString("post Deleted!")
 }
 
