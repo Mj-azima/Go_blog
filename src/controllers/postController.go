@@ -11,17 +11,17 @@ import (
 	"strconv"
 )
 
-type PostStruct struct {
+type PostController struct {
 }
 
 //Create post Page controller
-func (p *PostStruct) CreatePostPage(c *fiber.Ctx) error {
+func (p *PostController) CreatePostPage(c *fiber.Ctx) error {
 
 	return c.Render("createPost", fiber.Map{})
 }
 
 //Create post request controller
-func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
+func (p *PostController) CreatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -56,7 +56,7 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 }
 
 //Update post page controller
-func (p *PostStruct) UpdatePostPage(c *fiber.Ctx) error {
+func (p *PostController) UpdatePostPage(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	id, _ := strconv.Atoi(postId) // type check
@@ -73,7 +73,7 @@ func (p *PostStruct) UpdatePostPage(c *fiber.Ctx) error {
 }
 
 //Update post request controller
-func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
+func (p *PostController) UpdatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 	postId := c.Params("id")
 
@@ -94,7 +94,7 @@ func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 }
 
 //Get all Posts page controller
-func (p *PostStruct) Posts(c *fiber.Ctx) error {
+func (p *PostController) Posts(c *fiber.Ctx) error {
 
 	posts, err := postModel.GetAll()
 	if err != nil {
@@ -104,7 +104,7 @@ func (p *PostStruct) Posts(c *fiber.Ctx) error {
 }
 
 //Get signle post page controller
-func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
+func (p *PostController) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	id, _ := strconv.Atoi(postId) // type check
@@ -123,7 +123,7 @@ func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 }
 
 //Delete post request controller
-func (p *PostStruct) DeletePost(c *fiber.Ctx) error {
+func (p *PostController) DeletePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	id, _ := strconv.Atoi(postId) // type check

@@ -10,12 +10,12 @@ import (
 func SetUpRoutes(app *fiber.App) {
 
 	//Index
-	indexStruct := new(controllers.IndexStruct)
+	indexStruct := new(controllers.IndexController)
 	//Index page route
 	app.Get("/", indexStruct.Index)
 
 	//Authentication
-	authStruct := new(controllers.AuthenticationStruct)
+	authStruct := new(controllers.AuthenticaionController)
 	//Register page route
 	app.Get("/register", authStruct.RegisterPage)
 	//Register request route
@@ -29,7 +29,7 @@ func SetUpRoutes(app *fiber.App) {
 	app.Post("/logout", authStruct.Logout)
 
 	//Post
-	postStruct := new(controllers.PostStruct)
+	postStruct := new(controllers.PostController)
 	//Create Post page route
 	app.Get("/post", middlewares.RequireLogin, postStruct.CreatePostPage)
 	//Create Post request route

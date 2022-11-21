@@ -8,16 +8,16 @@ import (
 )
 
 //Authentication
-type AuthenticationStruct struct {
+type AuthenticaionController struct {
 }
 
 //Register page controller
-func (a *AuthenticationStruct) RegisterPage(c *fiber.Ctx) error {
+func (a *AuthenticaionController) RegisterPage(c *fiber.Ctx) error {
 	return c.Render("register", fiber.Map{})
 }
 
 //Register request controller
-func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
+func (a *AuthenticaionController) Register(c *fiber.Ctx) error {
 	payload := validators.User{}
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -44,13 +44,13 @@ func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
 }
 
 //Login page controller
-func (a *AuthenticationStruct) LoginPage(c *fiber.Ctx) error {
+func (a *AuthenticaionController) LoginPage(c *fiber.Ctx) error {
 
 	return c.Render("login", fiber.Map{})
 }
 
 //Login request controller
-func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
+func (a *AuthenticaionController) Login(c *fiber.Ctx) error {
 
 	payload := validators.User{}
 
@@ -92,7 +92,7 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 }
 
 //Logout request controller
-func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
+func (a *AuthenticaionController) Logout(c *fiber.Ctx) error {
 
 	Session := services.Instance
 
