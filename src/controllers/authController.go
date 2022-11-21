@@ -5,7 +5,6 @@ import (
 	"blog/src/services"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 //Authentication
@@ -29,7 +28,13 @@ func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10) //Todo: bcrypt service
+	//passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10) //Todo: bcrypt service
+
+	bcrypt := new(services.Bcrypt)
+	passwd, err := bcrypt.GenerateFromPassword([]byte(payload.Password), 10)
+	if err != nil {
+		return err
+	}
 
 	if err := userModel.Create(payload.Email, passwd); err != nil {
 		return err
@@ -62,7 +67,14 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil { //Todo: bcrypt service
+	//if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil { //Todo: bcrypt service
+	//	c.Status(fiber.StatusBadRequest)
+	//	return c.JSON(fiber.Map{
+	//		"message": "incorrect password",
+	//	})
+	//}
+	bcrypt := new(services.Bcrypt)
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"message": "incorrect password",
