@@ -16,6 +16,17 @@ func (p *User) Get(id int) (models.Users, error) {
 	return user, nil
 }
 
+func (p *User) GetByEmail(email string) (models.Users, error) {
+
+	var user models.Users
+
+	if err := database.DBConn.Find(&user, "email = ?", email).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (p User) GetAll() ([]models.Users, error) {
 	var users []models.Users
 	result := database.DBConn.Find(&users)

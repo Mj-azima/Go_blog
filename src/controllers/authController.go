@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"blog/src/database"
-	"blog/src/models"
+	"blog/src/repositories"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 //Authentication
@@ -32,14 +31,19 @@ func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
 
 	passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10)
 
-	user := models.Users{
-		Email:    payload.Email,
-		Password: passwd,
+	//user := models.Users{
+	//	Email:    payload.Email,
+	//	Password: passwd,
+	//}
+	//tx := database.DBConn.Create(&user)
+	//if tx.Error != nil {
+	//	return tx.Error
+	//}
+
+	if err := userModel.Create(payload.Email, passwd); err != nil {
+		return err
 	}
-	tx := database.DBConn.Create(&user)
-	if tx.Error != nil {
-		return tx.Error
-	}
+
 	return c.Redirect("/login")
 }
 
@@ -62,13 +66,18 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 	if err := validators.ValidateStruct(payload); err != nil {
 		return err
 	}
-	var user models.Users
+	//var user models.Users
+	//
+	//result := database.DBConn.Find(&user, "email = ?", payload.Email)
+	//
+	//if result.Error != nil {
+	//	log.Fatal("not found a user")
+	//	return result.Error
+	//}
 
-	result := database.DBConn.Find(&user, "email = ?", payload.Email)
-
-	if result.Error != nil {
-		log.Fatal("not found a user")
-		return result.Error
+	user, err := userModel.GetByEmail(payload.Email)
+	if err != nil {
+		return err
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil {
@@ -164,3 +173,9 @@ func IsLogin(c *fiber.Ctx) (bool, error) {
 //	Session = new(database.Session)
 //	Session.SetSession()
 //}
+
+var userModel *repositories.User
+
+func init() {
+	userModel = new(repositories.User)
+}
