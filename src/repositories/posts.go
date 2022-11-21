@@ -38,12 +38,18 @@ func (p Post) Create(author uint, body string) error {
 }
 
 func (p *Post) Edit(id int, body string) error {
-	var post models.Posts
-	result := database.DBConn.Find(&post, id)
-	if result.Error != nil {
-		return result.Error
+	//var post models.Posts
+	//result := database.DBConn.Find(&post, id)
+	//if result.Error != nil {
+	//	return result.Error
+	//}
+
+	post, err := p.Get(id)
+	if err != nil {
+		return err
 	}
-	result = database.DBConn.Model(&post).Update("Body", body)
+
+	result := database.DBConn.Model(&post).Update("Body", body)
 	if result.Error != nil {
 		return result.Error
 	}
