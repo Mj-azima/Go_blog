@@ -31,13 +31,6 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	//store := database.GetSession()
-	//
-	//currSession, err := store.Get(c)
-	//if err != nil {
-	//	return err
-	//}
-	//usersess := currSession.Get("User").(fiber.Map)
 	Session := database.Instance
 
 	usersess, err := Session.Get(c)
@@ -53,15 +46,6 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 		log.Fatal("not found a user")
 		return result.Error
 	}
-
-	//post := models.Posts{
-	//	Auther: user.ID,
-	//	Body:   payload.Body,
-	//}
-	//tx := database.DBConn.Create(&post)
-	//if tx.Error != nil {
-	//	return tx.Error
-	//}
 
 	if err := postModel.Create(user.ID, payload.Body); err != nil {
 		return err
@@ -100,15 +84,6 @@ func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	//var post models.Posts
-	//result := database.DBConn.Find(&post, postId)
-	//if result.Error != nil {
-	//	return result.Error
-	//}
-	//result = database.DBConn.Model(&post).Update("Body", payload.Body)
-	//if result.Error != nil {
-	//	return result.Error
-	//}
 	id, _ := strconv.Atoi(postId) // type check
 	if err := postModel.Edit(id, payload.Body); err != nil {
 		return err
@@ -119,12 +94,7 @@ func (p *PostStruct) UpdatePost(c *fiber.Ctx) error {
 
 //Get all Posts page controller
 func (p *PostStruct) Posts(c *fiber.Ctx) error {
-	//var posts []models.Posts
-	//result := database.DBConn.Find(&posts)
-	//if result.Error != nil {
-	//	return result.Error
-	//}
-	//
+
 	posts, err := postModel.GetAll()
 	if err != nil {
 		return err
@@ -136,11 +106,6 @@ func (p *PostStruct) Posts(c *fiber.Ctx) error {
 func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
-	//var post models.Posts
-	//
-	//if err := database.DBConn.First(&post, postId).Error; err != nil {
-	//	return err
-	//}
 	id, _ := strconv.Atoi(postId) // type check
 	post, err := postModel.Get(id)
 	if err != nil {
@@ -159,10 +124,7 @@ func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 //Delete post request controller
 func (p *PostStruct) DeletePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
-	//var post models.Posts
-	//if err := database.DBConn.Delete(&post, postId).Error; err != nil {
-	//	return err
-	//}
+
 	id, _ := strconv.Atoi(postId) // type check
 	if err := postModel.Delete(id); err != nil {
 		return err

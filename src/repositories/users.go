@@ -49,11 +49,7 @@ func (p User) Create(email string, password []byte) error {
 }
 
 func (p *User) Edit(id int, email string, password []byte) error {
-	//var user models.Users
-	//result := database.DBConn.Find(&user, id)
-	//if result.Error != nil {
-	//	return result.Error
-	//}
+
 	user, err := p.Get(id)
 	if err != nil {
 		return err

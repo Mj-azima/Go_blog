@@ -31,15 +31,6 @@ func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
 
 	passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10)
 
-	//user := models.Users{
-	//	Email:    payload.Email,
-	//	Password: passwd,
-	//}
-	//tx := database.DBConn.Create(&user)
-	//if tx.Error != nil {
-	//	return tx.Error
-	//}
-
 	if err := userModel.Create(payload.Email, passwd); err != nil {
 		return err
 	}
@@ -62,18 +53,9 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	//var dbUser models.Users
 	if err := validators.ValidateStruct(payload); err != nil {
 		return err
 	}
-	//var user models.Users
-	//
-	//result := database.DBConn.Find(&user, "email = ?", payload.Email)
-	//
-	//if result.Error != nil {
-	//	log.Fatal("not found a user")
-	//	return result.Error
-	//}
 
 	user, err := userModel.GetByEmail(payload.Email)
 	if err != nil {
@@ -87,22 +69,6 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	//store := database.GetSession()
-	//
-	//currSession, err := store.Get(c)
-	//if err != nil {
-	//	return err
-	//}
-	//err = currSession.Regenerate()
-	//if err != nil {
-	//	return err
-	//}
-	//currSession.Set("User", fiber.Map{"Email": user.Email})
-	//err = currSession.Save()
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	Session := database.Instance
 
 	if err := Session.Generate(c, user.Email); err != nil {
@@ -115,26 +81,7 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 
 //Logout request controller
 func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
-	//store := database.GetSession()
-	//currSession, err := store.Get(c)
-	//if err != nil {
-	//	return err
-	//}
-	//user := currSession.Get("User")
 
-	//user,err := Session.Get(c)
-	//if err != nil {
-	//	return err
-	//}
-
-	//if user != nil {
-	//	currSession.Delete("User")
-	//}
-
-	//err = currSession.Save()
-	//if err != nil {
-	//	panic(err)
-	//}
 	Session := database.Instance
 
 	if err := Session.Delete(c); err != nil {
@@ -146,12 +93,7 @@ func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
 
 //IsLogin service
 func IsLogin(c *fiber.Ctx) (bool, error) {
-	//store := database.GetSession()
-	//currSession, err := store.Get(c)
-	//if err != nil {
-	//	return false, err
-	//}
-	//user := currSession.Get("User")
+
 	Session := database.Instance
 
 	user, err := Session.Get(c)
@@ -166,13 +108,6 @@ func IsLogin(c *fiber.Ctx) (bool, error) {
 	}
 	return true, nil
 }
-
-//var Session *database.Session
-//
-//func init() {
-//	Session = new(database.Session)
-//	Session.SetSession()
-//}
 
 var userModel *repositories.User
 
