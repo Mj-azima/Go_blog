@@ -4,6 +4,7 @@ import (
 	"blog/src/controllers"
 	"blog/src/database"
 	"blog/src/models"
+	"blog/src/services"
 	"github.com/gofiber/fiber/v2"
 	"log"
 )
@@ -30,7 +31,7 @@ func RequireLogin(c *fiber.Ctx) error {
 func IsAuthor(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
-	Session := database.Instance
+	Session := services.Instance
 
 	usersess, err := Session.Get(c)
 	if err != nil {

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"blog/src/database"
 	"blog/src/repositories"
+	"blog/src/services"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -29,7 +29,7 @@ func (a *AuthenticationStruct) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10)
+	passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10) //Todo: bcrypt service
 
 	if err := userModel.Create(payload.Email, passwd); err != nil {
 		return err
@@ -62,18 +62,18 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil { //Todo: bcrypt service
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"message": "incorrect password",
 		})
 	}
 
-	Session := database.Instance
+	Session := services.Instance
 
 	if err := Session.Generate(c, user.Email); err != nil {
 		return err
-	}
+	} //Todo: session service
 
 	return c.Redirect("/")
 
@@ -82,19 +82,19 @@ func (a *AuthenticationStruct) Login(c *fiber.Ctx) error {
 //Logout request controller
 func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
 
-	Session := database.Instance
+	Session := services.Instance
 
 	if err := Session.Delete(c); err != nil {
 		return err
-	}
+	} //Todo: session service
 
 	return c.Redirect("/")
 }
 
 //IsLogin service
-func IsLogin(c *fiber.Ctx) (bool, error) {
+func IsLogin(c *fiber.Ctx) (bool, error) { //Todo: IsLogin service
 
-	Session := database.Instance
+	Session := services.Instance
 
 	user, err := Session.Get(c)
 	if err != nil {

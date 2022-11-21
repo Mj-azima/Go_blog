@@ -4,6 +4,7 @@ import (
 	"blog/src/database"
 	"blog/src/models"
 	"blog/src/repositories"
+	"blog/src/services"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
 	"log"
@@ -31,9 +32,9 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	Session := database.Instance
+	Session := services.Instance
 
-	usersess, err := Session.Get(c)
+	usersess, err := Session.Get(c) //Todo: session service
 	if err != nil {
 		return err
 	}

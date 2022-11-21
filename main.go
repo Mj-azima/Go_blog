@@ -3,6 +3,7 @@ package main
 import (
 	"blog/src/database"
 	"blog/src/routes"
+	"blog/src/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )
@@ -14,7 +15,7 @@ func main() {
 	})
 
 	database.ConnectDb()
-	Session := database.Instance
+	Session := services.Instance
 	Session.SetSession()
 
 	routes.SetUpRoutes(app)
