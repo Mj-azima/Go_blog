@@ -58,10 +58,10 @@ func (p *PostStruct) CreatePost(c *fiber.Ctx) error {
 func (p *PostStruct) UpdatePostPage(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
-	var post models.Posts
-	result := database.DBConn.Find(&post, postId)
-	if result.Error != nil {
-		return result.Error
+	id, _ := strconv.Atoi(postId) // type check
+	post, result, err := postModel.Get(id)
+	if err != nil {
+		return err
 	}
 
 	if result.RowsAffected == 0 {
@@ -107,7 +107,7 @@ func (p *PostStruct) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	id, _ := strconv.Atoi(postId) // type check
-	post, err := postModel.Get(id)
+	post, _, err := postModel.Get(id)
 	if err != nil {
 		return err
 	}

@@ -3,17 +3,19 @@ package repositories
 import (
 	"blog/src/database"
 	"blog/src/models"
+	"gorm.io/gorm"
 )
 
 type Post models.Posts
 
-func (p *Post) Get(id int) (models.Posts, error) {
+func (p *Post) Get(id int) (models.Posts, *gorm.DB, error) {
 	var post models.Posts
-	if err := database.DBConn.First(&post, id).Error; err != nil {
-		return post, err
+	result := database.DBConn.First(&post, id)
+	if err := result.Error; err != nil {
+		return post, result, err
 	}
 
-	return post, nil
+	return post, result, nil
 }
 
 func (p Post) GetAll() ([]models.Posts, error) {
@@ -39,7 +41,7 @@ func (p Post) Create(author uint, body string) error {
 
 func (p *Post) Edit(id int, body string) error {
 
-	post, err := p.Get(id)
+	post, _, err := p.Get(id)
 	if err != nil {
 		return err
 	}
