@@ -6,7 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type Post models.Posts
+type Post struct {
+}
 
 func (p *Post) Get(id int) (models.Posts, *gorm.DB, error) {
 	var post models.Posts
@@ -18,7 +19,16 @@ func (p *Post) Get(id int) (models.Posts, *gorm.DB, error) {
 	return post, result, nil
 }
 
-func (p Post) GetAll() ([]models.Posts, error) {
+func (p *Post) GetByIdAndAuthor(user uint, id int) (models.Posts, error) {
+	var post models.Posts
+	if err := database.DBConn.Find(&post, "auther = ? AND id = ?", user, id).Error; err != nil {
+		return post, err
+	}
+	return post, nil
+
+}
+
+func (p *Post) GetAll() ([]models.Posts, error) {
 	var posts []models.Posts
 	result := database.DBConn.Find(&posts)
 	if result.Error != nil {
@@ -27,7 +37,7 @@ func (p Post) GetAll() ([]models.Posts, error) {
 	return posts, nil
 }
 
-func (p Post) Create(author uint, body string) error {
+func (p *Post) Create(author uint, body string) error {
 	post := models.Posts{
 		Auther: author,
 		Body:   body,

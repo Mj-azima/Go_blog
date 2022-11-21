@@ -1,17 +1,18 @@
 package middlewares
 
 import (
-	"blog/src/controllers"
-	"blog/src/database"
-	"blog/src/models"
+	"blog/src/repositories"
 	"blog/src/services"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
+	"strconv"
 )
 
 //Check Logged in middleware
 func RequireLogin(c *fiber.Ctx) error {
-	isLogin, err := controllers.IsLogin(c)
+	//isLogin, err := controllers.IsLogin(c)
+	isLogin, err := auth.IsLogin(c)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,11 +39,26 @@ func IsAuthor(c *fiber.Ctx) error {
 		return err
 	}
 
-	var user models.Users
-	database.DBConn.Find(&user, "email = ?", usersess.(fiber.Map)["Email"])
+	//var user models.Users
+	//database.DBConn.Find(&user, "email = ?", usersess.(fiber.Map)["Email"])
 
-	var post models.Posts
-	database.DBConn.Find(&post, "auther = ? AND id = ?", user.ID, postId)
+	user, _ := userModel.GetByEmail(usersess.(fiber.Map)["Email"].(string))
+
+	//var post models.Posts
+	//database.DBConn.Find(&post, "auther = ? AND id = ?", user.ID, postId)
+	id, _ := strconv.Atoi(postId) // type check
+	post, _ := postModel.GetByIdAndAuthor(user.ID, id)
+	fmt.Println(post)
 
 	return c.Next()
+}
+
+var auth *services.Authenticaion
+var userModel *repositories.User
+var postModel *repositories.Post
+
+func init() {
+	auth = new(services.Authenticaion)
+	userModel = new(repositories.User)
+	postModel = new(repositories.Post)
 }

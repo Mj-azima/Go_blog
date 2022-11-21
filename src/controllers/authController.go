@@ -104,22 +104,22 @@ func (a *AuthenticationStruct) Logout(c *fiber.Ctx) error {
 }
 
 //IsLogin service
-func IsLogin(c *fiber.Ctx) (bool, error) { //Todo: IsLogin service
-
-	Session := services.Instance
-
-	user, err := Session.Get(c)
-	if err != nil {
-		return false, err
-	}
-
-	if user == nil {
-		// This request is from a user that is not logged in.
-		// Send them to the login page.
-		return false, nil
-	}
-	return true, nil
-}
+//func IsLogin(c *fiber.Ctx) (bool, error) { //Todo: IsLogin service
+//
+//	Session := services.Instance
+//
+//	user, err := Session.Get(c)
+//	if err != nil {
+//		return false, err
+//	}
+//
+//	if user == nil {
+//		// This request is from a user that is not logged in.
+//		// Send them to the login page.
+//		return false, nil
+//	}
+//	return true, nil
+//}
 
 var userModel *repositories.User
 
