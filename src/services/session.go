@@ -10,8 +10,6 @@ type Session struct {
 	store *session.Store
 }
 
-//var store *session.Store
-
 func (s *Session) SetSession() {
 
 	s.store = session.New(session.Config{

@@ -39,13 +39,8 @@ func IsAuthor(c *fiber.Ctx) error {
 		return err
 	}
 
-	//var user models.Users
-	//database.DBConn.Find(&user, "email = ?", usersess.(fiber.Map)["Email"])
-
 	user, _ := userModel.GetByEmail(usersess.(fiber.Map)["Email"].(string))
 
-	//var post models.Posts
-	//database.DBConn.Find(&post, "auther = ? AND id = ?", user.ID, postId)
 	id, _ := strconv.Atoi(postId) // type check
 	post, _ := postModel.GetByIdAndAuthor(user.ID, id)
 	fmt.Println(post)

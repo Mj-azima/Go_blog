@@ -28,8 +28,6 @@ func (a *AuthenticaionController) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	//passwd, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), 10) //Todo: bcrypt service
-
 	bcrypt := new(services.Bcrypt)
 	passwd, err := bcrypt.GenerateFromPassword([]byte(payload.Password), 10)
 	if err != nil {
@@ -67,12 +65,6 @@ func (a *AuthenticaionController) Login(c *fiber.Ctx) error {
 		return err
 	}
 
-	//if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil { //Todo: bcrypt service
-	//	c.Status(fiber.StatusBadRequest)
-	//	return c.JSON(fiber.Map{
-	//		"message": "incorrect password",
-	//	})
-	//}
 	bcrypt := new(services.Bcrypt)
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password)); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -102,24 +94,6 @@ func (a *AuthenticaionController) Logout(c *fiber.Ctx) error {
 
 	return c.Redirect("/")
 }
-
-//IsLogin service
-//func IsLogin(c *fiber.Ctx) (bool, error) { //Todo: IsLogin service
-//
-//	Session := services.Instance
-//
-//	user, err := Session.Get(c)
-//	if err != nil {
-//		return false, err
-//	}
-//
-//	if user == nil {
-//		// This request is from a user that is not logged in.
-//		// Send them to the login page.
-//		return false, nil
-//	}
-//	return true, nil
-//}
 
 var userModel *repositories.User
 
