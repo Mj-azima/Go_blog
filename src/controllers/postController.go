@@ -48,7 +48,7 @@ func (p *PostController) CreatePost(c *fiber.Ctx) error {
 		return result.Error
 	}
 
-	if err := postModel.Create(user.ID, payload.Body); err != nil {
+	if err := postModel.Create(user, payload.Body); err != nil {
 		return err
 	}
 

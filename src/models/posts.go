@@ -6,6 +6,7 @@ import (
 
 type Posts struct {
 	gorm.Model
-	Body   string `gorm:"size:10000"`
-	Author uint   `json:"author"`
+	Body     string `gorm:"size:10000" json:"body"`
+	AuthorID uint   `json:"authorID"`
+	Author   Users  `json:"author"`
 }

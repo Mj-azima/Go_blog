@@ -37,7 +37,7 @@ func (p *Post) GetAll() ([]models.Posts, error) {
 	return posts, nil
 }
 
-func (p *Post) Create(author uint, body string) error {
+func (p *Post) Create(author models.Users, body string) error {
 	post := models.Posts{
 		Author: author,
 		Body:   body,

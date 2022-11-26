@@ -6,6 +6,6 @@ import (
 
 type Users struct {
 	gorm.Model
-	Email    string `gorm:"unique"`
-	Password []byte
+	Email    string `gorm:"unique" json:"email"`
+	Password []byte `json:"password"`
 }
