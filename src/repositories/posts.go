@@ -39,7 +39,7 @@ func (p *Post) GetAll() ([]models.Posts, error) {
 
 func (p *Post) Create(author uint, body string) error {
 	post := models.Posts{
-		Auther: author,
+		Author: author,
 		Body:   body,
 	}
 	tx := database.DBConn.Create(&post)

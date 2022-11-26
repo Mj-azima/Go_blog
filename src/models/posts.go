@@ -7,5 +7,5 @@ import (
 type Posts struct {
 	gorm.Model
 	Body   string `gorm:"size:10000"`
-	Auther uint
+	Author uint   `json:"author"`
 }

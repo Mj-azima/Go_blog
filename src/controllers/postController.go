@@ -114,7 +114,7 @@ func (p *PostController) SinglePost(c *fiber.Ctx) error {
 	}
 	var user models.Users
 
-	if err := database.DBConn.First(&user, post.Auther).Error; err != nil {
+	if err := database.DBConn.First(&user, post.Author).Error; err != nil {
 		return err
 	}
 
