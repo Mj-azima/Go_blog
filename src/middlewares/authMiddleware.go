@@ -3,7 +3,7 @@ package middlewares
 import (
 	"blog/src/repositories"
 	"blog/src/services"
-	"fmt"
+	"errors"
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"strconv"
@@ -39,11 +39,17 @@ func IsAuthor(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, _ := userModel.GetByEmail(usersess.(fiber.Map)["Email"].(string))
+	usersession := usersess.(fiber.Map)
+	email := usersession["Email"]
+	userEmail, ok := email.(string)
+	if !ok {
+		return errors.New("type casting error (usersession)!")
+	}
+
+	user, _ := userModel.GetByEmail(userEmail)
 
 	id, _ := strconv.Atoi(postId) // type check
-	post, _ := postModel.GetByIdAndAuthor(user.ID, id)
-	fmt.Println(post)
+	_, _ = postModel.GetByIdAndAuthor(user.ID, id)
 
 	return c.Next()
 }

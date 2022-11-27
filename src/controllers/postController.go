@@ -41,7 +41,9 @@ func (p *PostController) CreatePost(c *fiber.Ctx) error {
 
 	var user models.Users
 
-	result := database.DBConn.Find(&user, "email = ?", (usersess).(fiber.Map)["Email"])
+	usersession := usersess.(fiber.Map)
+	email := usersession["Email"]
+	result := database.DBConn.Find(&user, "email = ?", email)
 
 	if result.Error != nil {
 		log.Fatal("not found a user")

@@ -43,7 +43,7 @@ func SetUpRoutes(app *fiber.App) {
 	//Get all posts page
 	app.Get("/posts", postStruct.Posts)
 	//Get single post page
-	app.Get("/singlePost/:id", postStruct.SinglePost)
+	app.Get("/single-post/:id", postStruct.SinglePost)
 
 	//Delete post request
 	app.Post("/post/delete/:id", middlewares.RequireLogin, middlewares.IsAuthor, postStruct.DeletePost)
