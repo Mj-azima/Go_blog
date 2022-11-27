@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<!-- CSS only -->
+
+	<form action="/post/{{.post.ID}}", method="post">
+		<p><label for="w3review">Write Post</label></p>
+		<textarea id="w3review" name="body" rows="4" cols="50">{{ .post.Body }}</textarea>
+		<br>
+		<input type="submit" value="Submit">
+	</form>
+
+	<br>
+
+	<form action="/post/delete/{{ .post.ID }}" method="post">
+		<input type="hidden" name="delete" value="delete">
+		<input type="submit" value="Delete">
+	</form>
+	<!-- JavaScript Bundle with Popper -->
+
+</html>

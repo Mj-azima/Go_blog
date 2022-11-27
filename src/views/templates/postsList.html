@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+	{{ range .posts }}
+	<p>
+		{{ .Author.Email }}
+	</p>
+
+	<a href="/single-post/{{ .ID }}">
+				<p>
+			{{ .Body }}
+		</p>
+	</a>
+
+	<br>
+	{{ end }}
+</body>
+</html>
