@@ -30,7 +30,9 @@ func (p *Post) GetByIdAndAuthor(userId uint, id int) (models.Posts, error) {
 
 func (p *Post) GetAll() ([]models.Posts, error) {
 	var posts []models.Posts
-	result := database.DBConn.Find(&posts)
+
+	result := database.DBConn.Preload("Author").Find(&posts)
+
 	if result.Error != nil {
 		return posts, result.Error
 	}

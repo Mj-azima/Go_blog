@@ -6,8 +6,12 @@
 </head>
 <body>
 	{{ range .posts }}
+	<p>
+		{{ .Author.Email }}
+	</p>
+
 	<a href="/singlePost/{{ .ID }}">
-		<p>
+				<p>
 			{{ .Body }}
 		</p>
 	</a>
