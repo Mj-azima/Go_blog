@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
 
 var (
@@ -12,7 +13,8 @@ var (
 )
 
 func ConnectDb() {
-	dsn := "mj:1234@/blog?parseTime=true"
+
+	dsn := os.Getenv("MYSQL_DSN")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
