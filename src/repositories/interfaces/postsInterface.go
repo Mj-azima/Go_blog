@@ -6,10 +6,10 @@ import (
 )
 
 type IPost interface {
-	Get(i int) (models.Posts, *gorm.DB, error)
-	GetByIdAndAuthor(user, post int) (models.Posts, error)
-	GetAll() (models.Posts, error)
+	Get(id int) (models.Posts, *gorm.DB, error)
+	GetByIdAndAuthor(userId uint, id int) (models.Posts, error)
+	GetAll() ([]models.Posts, error)
 	Create(author models.Users, body string) error
-	Edit(id, author uint, body string) error
+	Edit(id int, body string) error
 	Delete(id int) error
 }

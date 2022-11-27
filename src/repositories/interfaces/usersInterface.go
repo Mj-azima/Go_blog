@@ -8,7 +8,7 @@ type IUser interface {
 	Get(id int) (models.Users, error)
 	GetByEmail(email string) (models.Users, error)
 	GetAll() ([]models.Users, error)
-	Create(email string, password []byte)
-	Edit(id int, email string, password []byte)
-	Delete(id int)
+	Create(email string, password []byte) error
+	Edit(id int, email string, password []byte) error
+	Delete(id int) error
 }

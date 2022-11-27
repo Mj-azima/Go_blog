@@ -1,13 +1,10 @@
 package controllers
 
 import (
-	"blog/src/database"
-	"blog/src/models"
 	"blog/src/repositories"
 	"blog/src/services"
 	"blog/src/validators"
 	"github.com/gofiber/fiber/v2"
-	"log"
 	"strconv"
 )
 
@@ -18,6 +15,7 @@ func init() {
 }
 
 type PostController struct {
+	services.Post
 }
 
 //Create post Page controller
@@ -45,18 +43,25 @@ func (p *PostController) CreatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	var user models.Users
+	//var user models.Users
 
 	usersession := usersess.(fiber.Map)
-	email := usersession["Email"]
-	result := database.DBConn.Find(&user, "email = ?", email)
+	email := usersession["Email"].(string)
 
-	if result.Error != nil {
-		log.Fatal("not found a user")
-		return result.Error
-	}
+	//result := database.DBConn.Find(&user, "email = ?", email)
+	//
+	//if result.Error != nil {
+	//	log.Fatal("not found a user")
+	//	return result.Error
+	//}
+	//
+	//if err := postModel.Create(user, payload.Body); err != nil {
+	//	return err
+	//}
+	//
 
-	if err := postModel.Create(user, payload.Body); err != nil {
+	err = p.Create(email, payload.Body)
+	if err != nil {
 		return err
 	}
 
@@ -93,8 +98,14 @@ func (p *PostController) UpdatePost(c *fiber.Ctx) error {
 		return err
 	}
 
+	//id, _ := strconv.Atoi(postId) // type check
+	//if err := postModel.Edit(id, payload.Body); err != nil {
+	//	return err
+	//}
+
 	id, _ := strconv.Atoi(postId) // type check
-	if err := postModel.Edit(id, payload.Body); err != nil {
+	err := p.Update(id, payload.Body)
+	if err != nil {
 		return err
 	}
 
@@ -104,10 +115,15 @@ func (p *PostController) UpdatePost(c *fiber.Ctx) error {
 //Get all Posts page controller
 func (p *PostController) Posts(c *fiber.Ctx) error {
 
-	posts, err := postModel.GetAll()
+	//posts, err := postModel.GetAll()
+	//if err != nil {
+	//	return err
+	//}
+	posts, err := p.GetAll()
 	if err != nil {
 		return err
 	}
+
 	return c.Render("postsList", fiber.Map{"posts": posts})
 }
 
@@ -115,14 +131,20 @@ func (p *PostController) Posts(c *fiber.Ctx) error {
 func (p *PostController) SinglePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
-	id, _ := strconv.Atoi(postId) // type check
-	post, _, err := postModel.Get(id)
-	if err != nil {
-		return err
-	}
-	var user models.Users
+	//id, _ := strconv.Atoi(postId) // type check
+	//post, _, err := postModel.Get(id)
+	//if err != nil {
+	//	return err
+	//}
+	//var user models.Users
+	//
+	//if err := database.DBConn.First(&user, post.Author).Error; err != nil {
+	//	return err
+	//}
 
-	if err := database.DBConn.First(&user, post.Author).Error; err != nil {
+	id, _ := strconv.Atoi(postId) // type check
+	post, user, err := p.Get(id)
+	if err != nil {
 		return err
 	}
 
@@ -134,10 +156,15 @@ func (p *PostController) SinglePost(c *fiber.Ctx) error {
 func (p *PostController) DeletePost(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
+	//id, _ := strconv.Atoi(postId) // type check
+	//if err := postModel.Delete(id); err != nil {
+	//	return err
+	//}
+
 	id, _ := strconv.Atoi(postId) // type check
-	if err := postModel.Delete(id); err != nil {
+	err := p.Delete(id)
+	if err != nil {
 		return err
 	}
-
 	return c.SendString("post Deleted!")
 }
