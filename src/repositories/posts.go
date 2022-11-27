@@ -19,9 +19,9 @@ func (p *Post) Get(id int) (models.Posts, *gorm.DB, error) {
 	return post, result, nil
 }
 
-func (p *Post) GetByIdAndAuthor(user uint, id int) (models.Posts, error) {
+func (p *Post) GetByIdAndAuthor(userId uint, id int) (models.Posts, error) {
 	var post models.Posts
-	if err := database.DBConn.Find(&post, "auther = ? AND id = ?", user, id).Error; err != nil {
+	if err := database.DBConn.Find(&post, "author_id = ? AND id = ?", userId, id).Error; err != nil {
 		return post, err
 	}
 	return post, nil
