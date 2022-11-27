@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+var Instance *Session
+
+func init() {
+	Instance = new(Session)
+}
+
 type Session struct {
 	store *session.Store
 }
@@ -69,10 +75,4 @@ func (s *Session) Delete(c *fiber.Ctx) error {
 		currSession.Delete("User")
 	}
 	return nil
-}
-
-var Instance *Session
-
-func init() {
-	Instance = new(Session)
 }

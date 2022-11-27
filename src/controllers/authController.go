@@ -7,6 +7,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+var userModel *repositories.User
+
+func init() {
+	userModel = new(repositories.User)
+}
+
 //Authentication
 type AuthenticaionController struct {
 }
@@ -93,10 +99,4 @@ func (a *AuthenticaionController) Logout(c *fiber.Ctx) error {
 	} //Todo: session service
 
 	return c.Redirect("/")
-}
-
-var userModel *repositories.User
-
-func init() {
-	userModel = new(repositories.User)
 }

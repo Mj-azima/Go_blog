@@ -11,6 +11,12 @@ import (
 	"strconv"
 )
 
+var postModel *repositories.Post
+
+func init() {
+	postModel = new(repositories.Post)
+}
+
 type PostController struct {
 }
 
@@ -134,10 +140,4 @@ func (p *PostController) DeletePost(c *fiber.Ctx) error {
 	}
 
 	return c.SendString("post Deleted!")
-}
-
-var postModel *repositories.Post
-
-func init() {
-	postModel = new(repositories.Post)
 }

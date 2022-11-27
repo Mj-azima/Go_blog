@@ -9,6 +9,16 @@ import (
 	"strconv"
 )
 
+var auth *services.Authenticaion
+var userModel *repositories.User
+var postModel *repositories.Post
+
+func init() {
+	auth = new(services.Authenticaion)
+	userModel = new(repositories.User)
+	postModel = new(repositories.Post)
+}
+
 //Check Logged in middleware
 func RequireLogin(c *fiber.Ctx) error {
 	//isLogin, err := controllers.IsLogin(c)
@@ -52,14 +62,4 @@ func IsAuthor(c *fiber.Ctx) error {
 	_, _ = postModel.GetByIdAndAuthor(user.ID, id)
 
 	return c.Next()
-}
-
-var auth *services.Authenticaion
-var userModel *repositories.User
-var postModel *repositories.Post
-
-func init() {
-	auth = new(services.Authenticaion)
-	userModel = new(repositories.User)
-	postModel = new(repositories.Post)
 }
