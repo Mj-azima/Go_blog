@@ -4,6 +4,7 @@ import (
 	"blog/src/repositories"
 	"blog/src/services"
 	"blog/src/validators"
+	"errors"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 )
@@ -59,8 +60,15 @@ func (p *PostController) CreatePost(c *fiber.Ctx) error {
 	//	return err
 	//}
 	//
+	user, err := userModel.GetByEmail(email)
+	if err != nil {
+		return err
+	}
+	if user.ID == 0 {
+		return errors.New("not found a user")
+	}
 
-	err = p.Create(email, payload.Body)
+	err = p.Create(user, payload.Body)
 	if err != nil {
 		return err
 	}
