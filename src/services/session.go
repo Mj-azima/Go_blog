@@ -72,7 +72,9 @@ func (s *Session) Delete(c *fiber.Ctx) error {
 	user := currSession.Get("User")
 
 	if user != nil {
-		currSession.Delete("User")
+		if err := currSession.Destroy(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

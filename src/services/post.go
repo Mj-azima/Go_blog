@@ -4,31 +4,19 @@ import (
 	"blog/src/database"
 	"blog/src/models"
 	"blog/src/repositories"
-	"log"
 )
-
-var userModel *repositories.User
 
 var postModel *repositories.Post
 
 func init() {
 	postModel = new(repositories.Post)
-	userModel = new(repositories.User)
 
 }
 
 type Post struct {
 }
 
-func (p *Post) Create(email, body string) error {
-
-	user, err := userModel.GetByEmail(email)
-	if err != nil {
-		return err
-	}
-	if user.ID == 0 {
-		log.Fatal("not found a user")
-	}
+func (p *Post) Create(user models.Users, body string) error {
 
 	if err := postModel.Create(user, body); err != nil {
 		return err
