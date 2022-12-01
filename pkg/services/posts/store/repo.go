@@ -35,7 +35,7 @@ func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
 	var post posts.Posts
 	result := p.DB.First(&post, id)
 	if err := result.Error; err != nil {
-		return post, result, err
+		return post, result, posts.ErrPostNotFound
 	}
 
 	return post, result, nil
@@ -44,7 +44,7 @@ func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
 func (p *postRepo) GetByIdAndAuthor(userId uint, id int) (posts.Posts, error) {
 	var post posts.Posts
 	if err := p.DB.Find(&post, "author_id = ? AND id = ?", userId, id).Error; err != nil {
-		return post, err
+		return post, posts.ErrPostQuery
 	}
 	return post, nil
 
@@ -56,7 +56,7 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 	result := p.DB.Preload("Author").Find(&allpost)
 
 	if result.Error != nil {
-		return allpost, result.Error
+		return allpost, posts.ErrPostQuery
 	}
 	return allpost, nil
 }
@@ -68,7 +68,7 @@ func (p *postRepo) Create(author users.Users, body string) error {
 	}
 	tx := p.DB.Create(&post)
 	if tx.Error != nil {
-		return tx.Error
+		return posts.ErrPostCreate
 	}
 	return nil
 }
@@ -77,12 +77,12 @@ func (p *postRepo) Edit(id int, body string) error {
 
 	post, _, err := p.Get(id)
 	if err != nil {
-		return err
+		return posts.ErrPostNotFound
 	}
 
 	result := p.DB.Model(&post).Update("Body", body)
 	if result.Error != nil {
-		return result.Error
+		return posts.ErrPostUpdate
 	}
 	return nil
 }
