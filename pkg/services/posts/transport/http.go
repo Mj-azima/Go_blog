@@ -43,8 +43,8 @@ func newHandler(router *fiber.App, ps posts.Service, us users.Service, am middle
 	router.Get("/post", h.AuthMiddleware.RequireLogin, h.CreatePostPage)
 	router.Post("/post", h.AuthMiddleware.RequireLogin, h.CreatePost)
 
-	router.Post("/post/:id", h.AuthMiddleware.RequireLogin, h.AuthMiddleware.IsAuthor, h.Update)
-	router.Get("/post/:id", h.AuthMiddleware.RequireLogin, h.AuthMiddleware.IsAuthor, h.updatePostPage)
+	router.Post("/post/:id", h.AuthMiddleware.RequireLogin, h.Update)
+	router.Get("/post/:id", h.AuthMiddleware.RequireLogin, h.updatePostPage)
 
 	router.Get("/single-post/:id", h.singlePostPage)
 
@@ -153,8 +153,24 @@ func (h *handler) Update(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
+	Session := sessions.Instance
+	usersess, err := Session.Get(c)
+	if err != nil {
+		return err
+	}
+
+	usersession := usersess.(fiber.Map)
+	email := usersession["Email"].(string)
+
+	user, err := h.UserService.GetByEmail(email)
+	if err != nil {
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
+	}
+
 	id, _ := strconv.Atoi(postId) // type check
-	err := h.PostService.Update(id, payload.Body)
+	err = h.PostService.Update(id, payload.Body, user)
 
 	//if err != nil {
 	//	return err

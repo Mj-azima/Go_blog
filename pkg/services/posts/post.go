@@ -12,13 +12,13 @@ type Repo interface {
 	GetByIdAndAuthor(userId uint, id int) (Posts, error)
 	GetAll() ([]Posts, error)
 	Create(author users.Users, body string) error
-	Edit(id int, body string) error
+	Edit(id int, body string, user users.Users) error
 	Delete(id int) error
 }
 
 type Service interface {
 	Create(author users.Users, body string) error
-	Update(id int, body string) error
+	Update(id int, body string, user users.Users) error
 	Get(id int) (Posts, error)
 	GetAll() ([]Posts, error)
 	Delete(id int) error
@@ -53,9 +53,9 @@ func (p *post) Create(author users.Users, body string) error {
 	return nil
 }
 
-func (p *post) Update(id int, body string) error {
+func (p *post) Update(id int, body string, user users.Users) error {
 
-	if err := p.repo.Edit(id, body); err != nil {
+	if err := p.repo.Edit(id, body, user); err != nil {
 		return err
 	}
 	return nil

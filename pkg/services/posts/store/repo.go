@@ -33,7 +33,7 @@ func New(conn *gorm.DB) posts.Repo {
 
 func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
 	var post posts.Posts
-	result := p.DB.First(&post, id)
+	result := p.DB.Preload("Editors").First(&post, id)
 	if err := result.Error; err != nil {
 		return post, result, posts.ErrPostNotFound
 	}
@@ -73,15 +73,15 @@ func (p *postRepo) Create(author users.Users, body string) error {
 	return nil
 }
 
-func (p *postRepo) Edit(id int, body string) error {
+func (p *postRepo) Edit(id int, body string, user users.Users) error {
 
 	post, _, err := p.Get(id)
 	if err != nil {
 		return posts.ErrPostNotFound
 	}
 
-	result := p.DB.Model(&post).Update("Body", body)
-	if result.Error != nil {
+	err = p.DB.Model(&post).Update("Body", body).Association("Editors").Append(&user)
+	if err != nil {
 		return posts.ErrPostUpdate
 	}
 	return nil

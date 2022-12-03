@@ -13,6 +13,15 @@
 	<p>
 		{{ .post.Body }}
 	</p>
+	<br>
+	{{ range .post.Editors }}
+	<p>
+
+		{{ .Email }}
+		<br>
+
+	</p>
+	{{ end }}
 
 </body>
 </html>
