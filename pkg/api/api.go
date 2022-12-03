@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 	"log"
+	"os"
 )
 
 type Config struct {
@@ -49,7 +50,8 @@ func Start(cfg *Config) {
 
 	//templateEngineDir := os.Getenv("TEMPLATE_ENGINE_DIR")
 	//./../../src/views/templates
-	engine := html.New("./../../pkg/services", ".html")
+	os.Getenv("TEMPLATE_ENGINE_DIR")
+	engine := html.New("./pkg/services", ".html")
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
