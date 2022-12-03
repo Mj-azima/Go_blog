@@ -45,10 +45,10 @@ func (u *userRepo) GetByEmail(email string) (users.Users, error) {
 	var user users.Users
 
 	if err := u.DB.Find(&user, "email = ?", email).Error; err != nil {
-		return user, err
+		return user, users.ErrUserNotFound
 	}
 
-	return user, users.ErrUserNotFound
+	return user, nil
 }
 
 func (u *userRepo) GetAll() ([]users.Users, error) {
