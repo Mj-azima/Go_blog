@@ -13,7 +13,7 @@ func GenerateFromPassword(password []byte, cost int) ([]byte, error) {
 func CompareHashAndPassword(hashedPassword []byte, password []byte) error {
 	err := bcrypt.CompareHashAndPassword(hashedPassword, password)
 	if err != nil {
-		return err
+		return ErrIncorrectPasswordError
 	}
 	return nil
 }

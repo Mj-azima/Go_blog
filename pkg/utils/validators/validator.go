@@ -47,7 +47,7 @@ func ValidateStruct(payload interface{}) error {
 		}
 
 		// from here you can create your own error messages in whatever language you wish
-		return err
+		return ErrInvalidValidationError
 	}
 	println("success!")
 

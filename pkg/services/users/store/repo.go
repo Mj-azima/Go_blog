@@ -34,7 +34,7 @@ func New(conn *gorm.DB) users.Repo {
 func (u *userRepo) Get(id int) (users.Users, error) {
 	var user users.Users
 	if err := u.DB.First(&user, id).Error; err != nil {
-		return user, err
+		return user, users.ErrUserNotFound
 	}
 
 	return user, nil
@@ -48,14 +48,14 @@ func (u *userRepo) GetByEmail(email string) (users.Users, error) {
 		return user, err
 	}
 
-	return user, nil
+	return user, users.ErrUserNotFound
 }
 
 func (u *userRepo) GetAll() ([]users.Users, error) {
 	var allUser []users.Users
 	result := u.DB.Find(&allUser)
 	if result.Error != nil {
-		return allUser, result.Error
+		return allUser, users.ErrUserQuery
 	}
 	return allUser, nil
 }
@@ -67,7 +67,7 @@ func (u *userRepo) Create(email string, password []byte) error {
 	}
 	tx := u.DB.Create(&user)
 	if tx.Error != nil {
-		return tx.Error
+		return users.ErrUserCreate
 	}
 	return nil
 }
@@ -80,7 +80,7 @@ func (u *userRepo) Edit(id int, email string, password []byte) error {
 	}
 	result := u.DB.Model(&user).Updates(users.Users{Email: email, Password: password})
 	if result.Error != nil {
-		return result.Error
+		return users.ErrUserUpdate
 	}
 	return nil
 }
@@ -88,7 +88,7 @@ func (u *userRepo) Edit(id int, email string, password []byte) error {
 func (u *userRepo) Delete(id int) error {
 	var user users.Users
 	if err := u.DB.Delete(&user, id).Error; err != nil {
-		return err
+		return users.ErrUserDelete
 	}
 	return nil
 }

@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"blog/pkg/errors"
 	"blog/pkg/services/posts"
 	postStore "blog/pkg/services/posts/store"
 	"blog/pkg/services/users"
@@ -11,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
 	"strconv"
 )
 
@@ -41,7 +43,7 @@ func newHandler(router *fiber.App, ps posts.Service, us users.Service, am middle
 	router.Get("/post", h.AuthMiddleware.RequireLogin, h.CreatePostPage)
 	router.Post("/post", h.AuthMiddleware.RequireLogin, h.CreatePost)
 
-	router.Put("/post/:id", h.AuthMiddleware.RequireLogin, h.AuthMiddleware.IsAuthor, h.Update)
+	router.Post("/post/:id", h.AuthMiddleware.RequireLogin, h.AuthMiddleware.IsAuthor, h.Update)
 	router.Get("/post/:id", h.AuthMiddleware.RequireLogin, h.AuthMiddleware.IsAuthor, h.updatePostPage)
 
 	router.Get("/single-post/:id", h.singlePostPage)
@@ -55,9 +57,23 @@ func (h *handler) singlePostPage(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(postId) // type check
 	post, err := h.PostService.Get(id)
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{
+			"status": status,
+			"error":  appErr,
+		})
 	}
+
 	user, err := h.UserService.Get(post.AuthorID)
+	if err != nil {
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{
+			"status": status,
+			"error":  appErr,
+		})
+	}
 
 	return c.Render("posts/views/templates/singlePost", fiber.Map{"post": post, "user": user})
 }
@@ -65,7 +81,9 @@ func (h *handler) singlePostPage(c *fiber.Ctx) error {
 func (h *handler) posts(c *fiber.Ctx) error {
 	allpost, err := h.PostService.GetAll()
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
 	return c.Render("posts/views/templates/postsList", fiber.Map{"posts": allpost})
@@ -75,11 +93,17 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 
 	if err := c.BodyParser(&payload); err != nil {
-		return err
+		//return err
+		return c.JSON(fiber.Map{
+			"status": http.StatusBadRequest,
+			"error":  errors.NewAppError(errors.BadRequest, errors.Descriptions[errors.BadRequest], ""),
+		})
 	}
 
 	if err := validators.ValidateStruct(payload); err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
 	Session := sessions.Instance
@@ -93,7 +117,9 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 
 	user, err := h.UserService.GetByEmail(email)
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 	if user.ID == 0 {
 		log.Fatal("not found a user")
@@ -101,7 +127,9 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 
 	err = h.PostService.Create(user, payload.Body)
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
 	return c.SendString("post created !")
@@ -112,17 +140,29 @@ func (h *handler) Update(c *fiber.Ctx) error {
 	postId := c.Params("id")
 
 	if err := c.BodyParser(&payload); err != nil {
-		return err
+		//return err
+		return c.JSON(fiber.Map{
+			"status": http.StatusBadRequest,
+			"error":  errors.NewAppError(errors.BadRequest, errors.Descriptions[errors.BadRequest], ""),
+		})
 	}
 
 	if err := validators.ValidateStruct(payload); err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
 	id, _ := strconv.Atoi(postId) // type check
 	err := h.PostService.Update(id, payload.Body)
+
+	//if err != nil {
+	//	return err
+	//}
+
 	if err != nil {
-		return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
 	return c.SendString("Post Updated!")
@@ -134,7 +174,9 @@ func (h *handler) Delete(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(postId) // type check
 	err := h.PostService.Delete(id)
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 	return c.SendString("post Deleted!")
 }
@@ -148,11 +190,27 @@ func (h *handler) updatePostPage(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(postId) // type check
 	post, err := h.PostService.Get(id)
 	if err != nil {
-		return err
+		//return err
+		status, appErr := handleError(err)
+		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 	if post.ID == 0 {
 		return c.SendString("post not found")
 	}
 
 	return c.Render("posts/views/templates/updatePost", fiber.Map{"post": post})
+}
+
+// handleError allows us to map errors defined internally to appropriate HTTP error codes and JSON responses
+func handleError(e error) (int, error) {
+	switch e {
+	case posts.ErrPostNotFound:
+		return http.StatusNotFound, errors.NewAppError(errors.NotFound, e.Error(), "id")
+	case posts.ErrPostUpdate:
+		fallthrough
+	case posts.ErrPostCreate:
+		return http.StatusInternalServerError, errors.NewAppError(errors.InternalServerError, "unable to create/update post", "")
+	default:
+		return http.StatusInternalServerError, errors.NewAppError(errors.InternalServerError, e.Error(), "unknown")
+	}
 }
