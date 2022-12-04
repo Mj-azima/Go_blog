@@ -8,10 +8,12 @@ import (
 	"sync"
 )
 
+//post repository struct
 type postRepo struct {
 	DB *gorm.DB
 }
 
+//repository constructor with singleton pattern
 var once sync.Once
 var singleInstance *postRepo
 
@@ -31,6 +33,7 @@ func New(conn *gorm.DB) posts.Repo {
 	//return &postRepo{conn}
 }
 
+//Get method repository
 func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
 	var post posts.Posts
 	result := p.DB.Preload("Editors").First(&post, id)
@@ -41,6 +44,7 @@ func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
 	return post, result, nil
 }
 
+//Get by id & author method repository
 func (p *postRepo) GetByIdAndAuthor(userId uint, id int) (posts.Posts, error) {
 	var post posts.Posts
 	if err := p.DB.Find(&post, "author_id = ? AND id = ?", userId, id).Error; err != nil {
@@ -50,6 +54,7 @@ func (p *postRepo) GetByIdAndAuthor(userId uint, id int) (posts.Posts, error) {
 
 }
 
+//Get all method repository
 func (p *postRepo) GetAll() ([]posts.Posts, error) {
 	var allpost []posts.Posts
 
@@ -61,6 +66,7 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 	return allpost, nil
 }
 
+//Create method repository
 func (p *postRepo) Create(author users.Users, body string) error {
 	post := posts.Posts{
 		Author: author,
@@ -73,6 +79,7 @@ func (p *postRepo) Create(author users.Users, body string) error {
 	return nil
 }
 
+//Update method repository
 func (p *postRepo) Edit(id int, body string, user users.Users) error {
 
 	post, _, err := p.Get(id)
@@ -87,6 +94,7 @@ func (p *postRepo) Edit(id int, body string, user users.Users) error {
 	return nil
 }
 
+//Delete method repository
 func (p *postRepo) Delete(id int) error {
 	var post posts.Posts
 	if err := p.DB.Delete(&post, id).Error; err != nil {

@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//Post model
 type Posts struct {
 	gorm.Model
 	Body     string        `gorm:"size:10000" json:"body"`

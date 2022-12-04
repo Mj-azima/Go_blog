@@ -16,12 +16,14 @@ import (
 	"strconv"
 )
 
+//post handler struct
 type handler struct {
 	PostService    posts.Service
 	UserService    users.Service
 	AuthMiddleware middlewares.IAuthMiddleware
 }
 
+//Activate function for use services
 func Activate(router *fiber.App, db *gorm.DB) {
 	post := postStore.New(db)
 	user := userStore.New(db)
@@ -32,6 +34,7 @@ func Activate(router *fiber.App, db *gorm.DB) {
 	newHandler(router, postService, userService, authMiddleware)
 }
 
+//new handler implement
 func newHandler(router *fiber.App, ps posts.Service, us users.Service, am middlewares.IAuthMiddleware) {
 	h := handler{
 		PostService:    ps,
@@ -39,21 +42,27 @@ func newHandler(router *fiber.App, ps posts.Service, us users.Service, am middle
 		AuthMiddleware: am,
 	}
 
-	router.Get("/posts", h.posts)
+	//Create post routers
 	router.Get("/post", h.AuthMiddleware.RequireLogin, h.CreatePostPage)
 	router.Post("/post", h.AuthMiddleware.RequireLogin, h.CreatePost)
 
+	//Update & Delete post routers
 	router.Post("/post/:id", h.AuthMiddleware.RequireLogin, h.Update)
 	router.Get("/post/:id", h.AuthMiddleware.RequireLogin, h.updatePostPage)
-
-	router.Get("/single-post/:id", h.singlePostPage)
-
 	router.Post("/post/delete/:id", h.Delete)
+
+	//Get single & list post routers
+	router.Get("/single-post/:id", h.singlePostPage)
+	router.Get("/posts", h.posts)
+
 }
 
+//Get single post page handler
 func (h *handler) singlePostPage(c *fiber.Ctx) error {
+	//Get param id
 	postId := c.Params("id")
 
+	//cast id & Get post
 	id, _ := strconv.Atoi(postId) // type check
 	post, err := h.PostService.Get(id)
 	if err != nil {
@@ -65,6 +74,7 @@ func (h *handler) singlePostPage(c *fiber.Ctx) error {
 		})
 	}
 
+	//Get post's author
 	user, err := h.UserService.Get(post.AuthorID)
 	if err != nil {
 		//return err
@@ -78,7 +88,9 @@ func (h *handler) singlePostPage(c *fiber.Ctx) error {
 	return c.Render("posts/views/templates/singlePost", fiber.Map{"post": post, "user": user})
 }
 
+//Get all posts page handler
 func (h *handler) posts(c *fiber.Ctx) error {
+	//Get all posts
 	allpost, err := h.PostService.GetAll()
 	if err != nil {
 		//return err
@@ -89,9 +101,11 @@ func (h *handler) posts(c *fiber.Ctx) error {
 	return c.Render("posts/views/templates/postsList", fiber.Map{"posts": allpost})
 }
 
+//Get Crate post page handler
 func (h *handler) CreatePost(c *fiber.Ctx) error {
 	payload := validators.Post{}
 
+	//Parse body context
 	if err := c.BodyParser(&payload); err != nil {
 		//return err
 		return c.JSON(fiber.Map{
@@ -100,21 +114,25 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 		})
 	}
 
+	//Validate body context
 	if err := validators.ValidateStruct(payload); err != nil {
 		//return err
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
+	//Get user session
 	Session := sessions.Instance
 	usersess, err := Session.Get(c) //Todo: session service
 	if err != nil {
 		return err
 	}
 
+	//casting email from user session
 	usersession := usersess.(fiber.Map)
 	email := usersession["Email"].(string)
 
+	//Get User By email
 	user, err := h.UserService.GetByEmail(email)
 	if err != nil {
 		//return err
@@ -125,6 +143,7 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 		log.Fatal("not found a user")
 	}
 
+	//Create post with author & body
 	err = h.PostService.Create(user, payload.Body)
 	if err != nil {
 		//return err
@@ -135,10 +154,14 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 	return c.SendString("post created !")
 }
 
+//Update Post handler
 func (h *handler) Update(c *fiber.Ctx) error {
 	payload := validators.Post{}
+
+	//Get param id
 	postId := c.Params("id")
 
+	//Parse body context
 	if err := c.BodyParser(&payload); err != nil {
 		//return err
 		return c.JSON(fiber.Map{
@@ -147,21 +170,25 @@ func (h *handler) Update(c *fiber.Ctx) error {
 		})
 	}
 
+	//Validate body context
 	if err := validators.ValidateStruct(payload); err != nil {
 		//return err
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
+	//Get user session
 	Session := sessions.Instance
 	usersess, err := Session.Get(c)
 	if err != nil {
 		return err
 	}
 
+	//casting email from user session
 	usersession := usersess.(fiber.Map)
 	email := usersession["Email"].(string)
 
+	//Get User By email
 	user, err := h.UserService.GetByEmail(email)
 	if err != nil {
 		//return err
@@ -169,14 +196,11 @@ func (h *handler) Update(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
 
+	//Update post with author & body
 	id, _ := strconv.Atoi(postId) // type check
 	err = h.PostService.Update(id, payload.Body, user)
-
-	//if err != nil {
-	//	return err
-	//}
-
 	if err != nil {
+		//return err
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
@@ -184,9 +208,12 @@ func (h *handler) Update(c *fiber.Ctx) error {
 	return c.SendString("Post Updated!")
 }
 
+//Delete Post handler
 func (h *handler) Delete(c *fiber.Ctx) error {
+	//Get param id
 	postId := c.Params("id")
 
+	//Delete post by id
 	id, _ := strconv.Atoi(postId) // type check
 	err := h.PostService.Delete(id)
 	if err != nil {
@@ -194,15 +221,22 @@ func (h *handler) Delete(c *fiber.Ctx) error {
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
+
 	return c.SendString("post Deleted!")
 }
 
+//Create post page handler
 func (h *handler) CreatePostPage(c *fiber.Ctx) error {
 	return c.Render("posts/views/templates/createPost", fiber.Map{})
 }
 
+//Update post page handler
 func (h *handler) updatePostPage(c *fiber.Ctx) error {
+
+	//Get param id
 	postId := c.Params("id")
+
+	//Get post by id
 	id, _ := strconv.Atoi(postId) // type check
 	post, err := h.PostService.Get(id)
 	if err != nil {
@@ -210,6 +244,8 @@ func (h *handler) updatePostPage(c *fiber.Ctx) error {
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})
 	}
+
+	//Check post exist
 	if post.ID == 0 {
 		return c.SendString("post not found")
 	}

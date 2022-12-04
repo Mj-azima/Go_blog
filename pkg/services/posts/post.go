@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+//Repository interface
 type Repo interface {
 	Get(id int) (Posts, *gorm.DB, error)
 	GetByIdAndAuthor(userId uint, id int) (Posts, error)
@@ -16,6 +17,7 @@ type Repo interface {
 	Delete(id int) error
 }
 
+//Service interface
 type Service interface {
 	Create(author users.Users, body string) error
 	Update(id int, body string, user users.Users) error
@@ -24,10 +26,12 @@ type Service interface {
 	Delete(id int) error
 }
 
+//Post struct
 type post struct {
 	repo Repo
 }
 
+//Constructor with singleton pattern
 var once sync.Once
 var singleInstance *post
 
@@ -46,22 +50,27 @@ func New(repo Repo) Service {
 	//return &post{repo}
 }
 
+//Create method service
 func (p *post) Create(author users.Users, body string) error {
+	//Create post in repository
 	if err := p.repo.Create(author, body); err != nil {
 		return err
 	}
 	return nil
 }
 
+//Update method service
 func (p *post) Update(id int, body string, user users.Users) error {
-
+	//Update Post in repository
 	if err := p.repo.Edit(id, body, user); err != nil {
 		return err
 	}
 	return nil
 }
 
+//Get method service
 func (p *post) Get(id int) (Posts, error) {
+	//Get post from repository
 	post, _, err := p.repo.Get(id)
 	if err != nil {
 		return post, err
@@ -74,7 +83,9 @@ func (p *post) Get(id int) (Posts, error) {
 	return post, nil
 }
 
+//Get all method service
 func (p *post) GetAll() ([]Posts, error) {
+	//Get all post from repository
 	posts, err := p.repo.GetAll()
 	if err != nil {
 		return nil, err
@@ -83,7 +94,9 @@ func (p *post) GetAll() ([]Posts, error) {
 	return posts, nil
 }
 
+//Delete method service
 func (p *post) Delete(id int) error {
+	//Delete post from repository
 	if err := p.repo.Delete(id); err != nil {
 		return err
 	}
