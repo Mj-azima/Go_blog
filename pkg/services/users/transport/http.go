@@ -107,7 +107,7 @@ func (h *handler) register(c *fiber.Ctx) error {
 	}
 
 	//Create user with email & password
-	if err := h.UserService.Create(payload.Email, passwd); err != nil {
+	if _, err := h.UserService.Create(payload.Email, passwd); err != nil {
 		//return err
 		status, appErr := handleError(err)
 		return c.JSON(fiber.Map{"status": status, "err": appErr})

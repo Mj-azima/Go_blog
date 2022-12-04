@@ -19,12 +19,12 @@ type Repo interface {
 
 //Service interface
 type Service interface {
-	Create(email string, password []byte) error
-	Update(email string, password []byte) error
+	Create(email string, password []byte) (Users, error)
+	Update(email string, password []byte) (Users, error)
 	Get(id int) (Users, error)
 	GetByEmail(email string) (Users, error)
 	GetAll() ([]Users, error)
-	Delete(id int) error
+	Delete(id int) (Users, error)
 	IsLogin(c *fiber.Ctx) (bool, error)
 }
 
@@ -54,12 +54,13 @@ func New(repo Repo) Service {
 }
 
 //Create method service
-func (u *user) Create(email string, password []byte) error {
+func (u *user) Create(email string, password []byte) (Users, error) {
 	//Create user in repository
-	if _, err := u.repo.Create(email, password); err != nil {
-		return err
+	user, err := u.repo.Create(email, password)
+	if err != nil {
+		return user, err
 	}
-	return nil
+	return user, nil
 }
 
 //Get by email method service
@@ -101,13 +102,13 @@ func (a *user) IsLogin(c *fiber.Ctx) (bool, error) {
 }
 
 //Update method service
-func (u *user) Update(email string, password []byte) error {
+func (u *user) Update(email string, password []byte) (Users, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
 //Delete method service
-func (u *user) Delete(id int) error {
+func (u *user) Delete(id int) (Users, error) {
 	//TODO implement me
 	panic("implement me")
 }

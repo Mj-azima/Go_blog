@@ -18,11 +18,11 @@ type Repo interface {
 
 //Service interface
 type Service interface {
-	Create(author users.Users, body string) error
-	Update(id int, body string, user users.Users) error
+	Create(author users.Users, body string) (Posts, error)
+	Update(id int, body string, user users.Users) (Posts, error)
 	Get(id int) (Posts, error)
 	GetAll() ([]Posts, error)
-	Delete(id int) error
+	Delete(id int) (Posts, error)
 }
 
 //Post struct
@@ -50,21 +50,23 @@ func New(repo Repo) Service {
 }
 
 //Create method service
-func (p *post) Create(author users.Users, body string) error {
+func (p *post) Create(author users.Users, body string) (Posts, error) {
 	//Create post in repository
-	if _, err := p.repo.Create(author, body); err != nil {
-		return err
+	post, err := p.repo.Create(author, body)
+	if err != nil {
+		return post, err
 	}
-	return nil
+	return post, nil
 }
 
 //Update method service
-func (p *post) Update(id int, body string, user users.Users) error {
+func (p *post) Update(id int, body string, user users.Users) (Posts, error) {
 	//Update Post in repository
-	if _, err := p.repo.Edit(id, body, user); err != nil {
-		return err
+	post, err := p.repo.Edit(id, body, user)
+	if err != nil {
+		return post, err
 	}
-	return nil
+	return post, nil
 }
 
 //Get method service
@@ -94,10 +96,11 @@ func (p *post) GetAll() ([]Posts, error) {
 }
 
 //Delete method service
-func (p *post) Delete(id int) error {
+func (p *post) Delete(id int) (Posts, error) {
 	//Delete post from repository
-	if _, err := p.repo.Delete(id); err != nil {
-		return err
+	post, err := p.repo.Delete(id)
+	if err != nil {
+		return post, err
 	}
-	return nil
+	return post, nil
 }

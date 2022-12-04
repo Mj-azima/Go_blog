@@ -144,7 +144,7 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 	}
 
 	//Create post with author & body
-	err = h.PostService.Create(user, payload.Body)
+	_, err = h.PostService.Create(user, payload.Body)
 	if err != nil {
 		//return err
 		status, appErr := handleError(err)
@@ -198,7 +198,7 @@ func (h *handler) Update(c *fiber.Ctx) error {
 
 	//Update post with author & body
 	id, _ := strconv.Atoi(postId) // type check
-	err = h.PostService.Update(id, payload.Body, user)
+	_, err = h.PostService.Update(id, payload.Body, user)
 	if err != nil {
 		//return err
 		status, appErr := handleError(err)
@@ -215,7 +215,7 @@ func (h *handler) Delete(c *fiber.Ctx) error {
 
 	//Delete post by id
 	id, _ := strconv.Atoi(postId) // type check
-	err := h.PostService.Delete(id)
+	_, err := h.PostService.Delete(id)
 	if err != nil {
 		//return err
 		status, appErr := handleError(err)
