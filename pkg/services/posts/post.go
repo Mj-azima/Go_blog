@@ -3,18 +3,17 @@ package posts
 import (
 	"blog/pkg/services/users"
 	"fmt"
-	"gorm.io/gorm"
 	"sync"
 )
 
 //Repository interface
 type Repo interface {
-	Get(id int) (Posts, *gorm.DB, error)
+	Get(id int) (Posts, error)
 	GetByIdAndAuthor(userId uint, id int) (Posts, error)
 	GetAll() ([]Posts, error)
-	Create(author users.Users, body string) error
-	Edit(id int, body string, user users.Users) error
-	Delete(id int) error
+	Create(author users.Users, body string) (Posts, error)
+	Edit(id int, body string, user users.Users) (Posts, error)
+	Delete(id int) (Posts, error)
 }
 
 //Service interface
@@ -53,7 +52,7 @@ func New(repo Repo) Service {
 //Create method service
 func (p *post) Create(author users.Users, body string) error {
 	//Create post in repository
-	if err := p.repo.Create(author, body); err != nil {
+	if _, err := p.repo.Create(author, body); err != nil {
 		return err
 	}
 	return nil
@@ -62,7 +61,7 @@ func (p *post) Create(author users.Users, body string) error {
 //Update method service
 func (p *post) Update(id int, body string, user users.Users) error {
 	//Update Post in repository
-	if err := p.repo.Edit(id, body, user); err != nil {
+	if _, err := p.repo.Edit(id, body, user); err != nil {
 		return err
 	}
 	return nil
@@ -71,7 +70,7 @@ func (p *post) Update(id int, body string, user users.Users) error {
 //Get method service
 func (p *post) Get(id int) (Posts, error) {
 	//Get post from repository
-	post, _, err := p.repo.Get(id)
+	post, err := p.repo.Get(id)
 	if err != nil {
 		return post, err
 	}
@@ -97,7 +96,7 @@ func (p *post) GetAll() ([]Posts, error) {
 //Delete method service
 func (p *post) Delete(id int) error {
 	//Delete post from repository
-	if err := p.repo.Delete(id); err != nil {
+	if _, err := p.repo.Delete(id); err != nil {
 		return err
 	}
 	return nil

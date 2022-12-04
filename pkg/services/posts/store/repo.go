@@ -34,14 +34,14 @@ func New(conn *gorm.DB) posts.Repo {
 }
 
 //Get method repository
-func (p *postRepo) Get(id int) (posts.Posts, *gorm.DB, error) {
+func (p *postRepo) Get(id int) (posts.Posts, error) {
 	var post posts.Posts
 	result := p.DB.Preload("Editors").First(&post, id)
 	if err := result.Error; err != nil {
-		return post, result, posts.ErrPostNotFound
+		return post, posts.ErrPostNotFound
 	}
 
-	return post, result, nil
+	return post, nil
 }
 
 //Get by id & author method repository
@@ -67,38 +67,38 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 }
 
 //Create method repository
-func (p *postRepo) Create(author users.Users, body string) error {
+func (p *postRepo) Create(author users.Users, body string) (posts.Posts, error) {
 	post := posts.Posts{
 		Author: author,
 		Body:   body,
 	}
 	tx := p.DB.Create(&post)
 	if tx.Error != nil {
-		return posts.ErrPostCreate
+		return post, posts.ErrPostCreate
 	}
-	return nil
+	return post, nil
 }
 
 //Update method repository
-func (p *postRepo) Edit(id int, body string, user users.Users) error {
+func (p *postRepo) Edit(id int, body string, user users.Users) (posts.Posts, error) {
 
-	post, _, err := p.Get(id)
+	post, err := p.Get(id)
 	if err != nil {
-		return posts.ErrPostNotFound
+		return post, posts.ErrPostNotFound
 	}
 
 	err = p.DB.Model(&post).Update("Body", body).Association("Editors").Append(&user)
 	if err != nil {
-		return posts.ErrPostUpdate
+		return post, posts.ErrPostUpdate
 	}
-	return nil
+	return post, nil
 }
 
 //Delete method repository
-func (p *postRepo) Delete(id int) error {
+func (p *postRepo) Delete(id int) (posts.Posts, error) {
 	var post posts.Posts
 	if err := p.DB.Delete(&post, id).Error; err != nil {
-		return err
+		return post, err
 	}
-	return nil
+	return post, nil
 }

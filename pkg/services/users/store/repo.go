@@ -60,35 +60,35 @@ func (u *userRepo) GetAll() ([]users.Users, error) {
 	return allUser, nil
 }
 
-func (u *userRepo) Create(email string, password []byte) error {
+func (u *userRepo) Create(email string, password []byte) (users.Users, error) {
 	user := users.Users{
 		Email:    email,
 		Password: password,
 	}
 	tx := u.DB.Create(&user)
 	if tx.Error != nil {
-		return users.ErrUserCreate
+		return user, users.ErrUserCreate
 	}
-	return nil
+	return user, nil
 }
 
-func (u *userRepo) Edit(id int, email string, password []byte) error {
+func (u *userRepo) Edit(id int, email string, password []byte) (users.Users, error) {
 
 	user, err := u.Get(id)
 	if err != nil {
-		return err
+		return user, err
 	}
 	result := u.DB.Model(&user).Updates(users.Users{Email: email, Password: password})
 	if result.Error != nil {
-		return users.ErrUserUpdate
+		return user, users.ErrUserUpdate
 	}
-	return nil
+	return user, nil
 }
 
-func (u *userRepo) Delete(id int) error {
+func (u *userRepo) Delete(id int) (users.Users, error) {
 	var user users.Users
 	if err := u.DB.Delete(&user, id).Error; err != nil {
-		return users.ErrUserDelete
+		return user, users.ErrUserDelete
 	}
-	return nil
+	return user, nil
 }
