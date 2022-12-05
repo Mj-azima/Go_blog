@@ -2,8 +2,6 @@ package posts
 
 import (
 	"blog/pkg/services/users"
-	"fmt"
-	"sync"
 )
 
 //Repository interface
@@ -31,22 +29,22 @@ type post struct {
 }
 
 //Constructor with singleton pattern
-var once sync.Once
-var singleInstance *post
+//var once sync.Once
+//var singleInstance *post
 
 func New(repo Repo) Service {
-	if singleInstance == nil {
-		once.Do(
-			func() {
-				fmt.Println("Creating single instance now.")
-				singleInstance = &post{repo}
-			})
-	} else {
-		fmt.Println("Single instance already created.")
-	}
-
-	return singleInstance
-	//return &post{repo}
+	//if singleInstance == nil {
+	//	once.Do(
+	//		func() {
+	//			fmt.Println("Creating single instance now.")
+	//			singleInstance = &post{repo}
+	//		})
+	//} else {
+	//	fmt.Println("Single instance already created.")
+	//}
+	//
+	//return singleInstance
+	return &post{repo}
 }
 
 //Create method service
@@ -76,6 +74,7 @@ func (p *post) Get(id int) (Posts, error) {
 	if err != nil {
 		return post, err
 	}
+
 	//var user users.Users
 	//
 	//if err := database.DBConn.First(&user, post.Author).Error; err != nil {
