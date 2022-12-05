@@ -2,9 +2,7 @@ package users
 
 import (
 	"blog/pkg/utils/sessions"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"sync"
 )
 
 //Repository interface
@@ -34,23 +32,23 @@ type user struct {
 }
 
 //Constructor with singleton pattern
-var once sync.Once
-var singleInstance *user
+//var once sync.Once
+//var singleInstance *user
 
 func New(repo Repo) Service {
 
-	if singleInstance == nil {
-		once.Do(
-			func() {
-				fmt.Println("Creating single instance now.")
-				singleInstance = &user{repo}
-			})
-	} else {
-		fmt.Println("Single instance already created.")
-	}
-
-	return singleInstance
-	//return &user{repo}
+	//if singleInstance == nil {
+	//	once.Do(
+	//		func() {
+	//			fmt.Println("Creating single instance now.")
+	//			singleInstance = &user{repo}
+	//		})
+	//} else {
+	//	fmt.Println("Single instance already created.")
+	//}
+	//
+	//return singleInstance
+	return &user{repo}
 }
 
 //Create method service
