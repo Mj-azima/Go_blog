@@ -12,8 +12,8 @@ type Repo interface {
 	Get(id int) (Users, error)
 	GetByEmail(email string) (Users, error)
 	GetAll() ([]Users, error)
-	Create(email string, password []byte) (Users, error)
-	Edit(id int, email string, password []byte) (Users, error)
+	Create(email string, password []byte) (uint, error)
+	Edit(id int, email string, password []byte) error
 	Delete(id int) (Users, error)
 }
 
@@ -56,11 +56,11 @@ func New(repo Repo) Service {
 //Create method service
 func (u *user) Create(email string, password []byte) (Users, error) {
 	//Create user in repository
-	user, err := u.repo.Create(email, password)
+	userId, err := u.repo.Create(email, password)
 	if err != nil {
-		return user, err
+		return Users{}, err
 	}
-	return user, nil
+	return u.repo.Get(int(userId))
 }
 
 //Get by email method service

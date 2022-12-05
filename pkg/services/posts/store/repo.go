@@ -67,31 +67,31 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 }
 
 //Create method repository
-func (p *postRepo) Create(author users.Users, body string) (posts.Posts, error) {
+func (p *postRepo) Create(author users.Users, body string) (uint, error) {
 	post := posts.Posts{
 		Author: author,
 		Body:   body,
 	}
 	tx := p.DB.Create(&post)
 	if tx.Error != nil {
-		return post, posts.ErrPostCreate
+		return post.ID, posts.ErrPostCreate
 	}
-	return post, nil
+	return post.ID, nil
 }
 
 //Update method repository
-func (p *postRepo) Edit(id int, body string, user users.Users) (posts.Posts, error) {
+func (p *postRepo) Edit(id int, body string, user users.Users) error {
 
 	post, err := p.Get(id)
 	if err != nil {
-		return post, posts.ErrPostNotFound
+		return posts.ErrPostNotFound
 	}
 
 	err = p.DB.Model(&post).Update("Body", body).Association("Editors").Append(&user)
 	if err != nil {
-		return post, posts.ErrPostUpdate
+		return posts.ErrPostUpdate
 	}
-	return post, nil
+	return nil
 }
 
 //Delete method repository

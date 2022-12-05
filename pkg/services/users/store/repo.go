@@ -60,29 +60,29 @@ func (u *userRepo) GetAll() ([]users.Users, error) {
 	return allUser, nil
 }
 
-func (u *userRepo) Create(email string, password []byte) (users.Users, error) {
+func (u *userRepo) Create(email string, password []byte) (uint, error) {
 	user := users.Users{
 		Email:    email,
 		Password: password,
 	}
 	tx := u.DB.Create(&user)
 	if tx.Error != nil {
-		return user, users.ErrUserCreate
+		return user.ID, users.ErrUserCreate
 	}
-	return user, nil
+	return user.ID, nil
 }
 
-func (u *userRepo) Edit(id int, email string, password []byte) (users.Users, error) {
+func (u *userRepo) Edit(id int, email string, password []byte) error {
 
 	user, err := u.Get(id)
 	if err != nil {
-		return user, err
+		return users.ErrUserNotFound
 	}
 	result := u.DB.Model(&user).Updates(users.Users{Email: email, Password: password})
 	if result.Error != nil {
-		return user, users.ErrUserUpdate
+		return users.ErrUserUpdate
 	}
-	return user, nil
+	return nil
 }
 
 func (u *userRepo) Delete(id int) (users.Users, error) {
