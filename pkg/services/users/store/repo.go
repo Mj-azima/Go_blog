@@ -2,33 +2,31 @@ package store
 
 import (
 	"blog/pkg/services/users"
-	"fmt"
 	"gorm.io/gorm"
-	"sync"
 )
 
 type userRepo struct {
 	DB *gorm.DB
 }
 
-var once sync.Once
-var singleInstance *userRepo
+//var once sync.Once
+//var singleInstance *userRepo
 
 func New(conn *gorm.DB) users.Repo {
 
-	if singleInstance == nil {
-		once.Do(
-			func() {
-				fmt.Println("Creating single instance now.")
-				singleInstance = &userRepo{conn}
-			})
-	} else {
-		fmt.Println("Single instance already created.")
-	}
+	//if singleInstance == nil {
+	//	once.Do(
+	//		func() {
+	//			fmt.Println("Creating single instance now.")
+	//			singleInstance = &userRepo{conn}
+	//		})
+	//} else {
+	//	fmt.Println("Single instance already created.")
+	//}
+	//
+	//return singleInstance
 
-	return singleInstance
-
-	//return &userRepo{conn}
+	return &userRepo{conn}
 }
 
 func (u *userRepo) Get(id int) (users.Users, error) {
