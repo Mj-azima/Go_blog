@@ -3,9 +3,7 @@ package store
 import (
 	"blog/pkg/services/posts"
 	"blog/pkg/services/users"
-	"fmt"
 	"gorm.io/gorm"
-	"sync"
 )
 
 //post repository struct
@@ -14,23 +12,23 @@ type postRepo struct {
 }
 
 //repository constructor with singleton pattern
-var once sync.Once
-var singleInstance *postRepo
+//var once sync.Once
+//var singleInstance *postRepo
 
 func New(conn *gorm.DB) posts.Repo {
-	if singleInstance == nil {
-		once.Do(
-			func() {
-				fmt.Println("Creating single instance now.")
-				singleInstance = &postRepo{conn}
-			})
-	} else {
-		fmt.Println("Single instance already created.")
-	}
+	//if singleInstance == nil {
+	//	once.Do(
+	//		func() {
+	//			fmt.Println("Creating single instance now.")
+	//			singleInstance = &postRepo{conn}
+	//		})
+	//} else {
+	//	fmt.Println("Single instance already created.")
+	//}
+	//
+	//return singleInstance
 
-	return singleInstance
-
-	//return &postRepo{conn}
+	return &postRepo{conn}
 }
 
 //Get method repository
