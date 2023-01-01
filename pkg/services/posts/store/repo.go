@@ -65,10 +65,10 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 }
 
 //Create method repository
-func (p *postRepo) Create(author users.Users, body string) (uint, error) {
+func (p *postRepo) Create(authorId int, body string) (uint, error) {
 	post := posts.Posts{
-		Author: author,
-		Body:   body,
+		AuthorID: authorId,
+		Body:     body,
 	}
 	tx := p.DB.Create(&post)
 	if tx.Error != nil {

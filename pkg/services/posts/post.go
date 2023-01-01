@@ -9,14 +9,14 @@ type Repo interface {
 	Get(id int) (Posts, error)
 	GetByIdAndAuthor(userId uint, id int) (Posts, error)
 	GetAll() ([]Posts, error)
-	Create(author users.Users, body string) (uint, error)
+	Create(authorId int, body string) (uint, error)
 	Edit(id int, body string, user users.Users) error
 	Delete(id int) (Posts, error)
 }
 
 //Service interface
 type Service interface {
-	Create(author users.Users, body string) (Posts, error)
+	Create(authorId int, body string) (Posts, error)
 	Update(id int, body string, user users.Users) (Posts, error)
 	Get(id int) (Posts, error)
 	GetAll() ([]Posts, error)
@@ -48,9 +48,9 @@ func New(repo Repo) Service {
 }
 
 //Create method service
-func (p *post) Create(author users.Users, body string) (Posts, error) {
+func (p *post) Create(authorId int, body string) (Posts, error) {
 	//Create post in repository
-	postId, err := p.repo.Create(author, body)
+	postId, err := p.repo.Create(authorId, body)
 	if err != nil {
 		return Posts{}, err
 	}
