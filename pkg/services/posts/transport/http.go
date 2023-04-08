@@ -144,7 +144,7 @@ func (h *handler) CreatePost(c *fiber.Ctx) error {
 	}
 
 	//Create post with author & body
-	_, err = h.PostService.Create(user, payload.Body)
+	_, err = h.PostService.Create(int(user.ID), payload.Body)
 	if err != nil {
 		//return err
 		status, appErr := handleError(err)

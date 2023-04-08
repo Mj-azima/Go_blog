@@ -37,7 +37,7 @@ func (r *repoMock) GetAll() ([]Posts, error) {
 	return r.GetAllResult, r.GetAllError
 }
 
-func (r *repoMock) Create(author users.Users, body string) (uint, error) {
+func (r *repoMock) Create(authorID int, body string) (uint, error) {
 	return r.CreateResult, r.CreateError
 }
 
@@ -156,7 +156,7 @@ func TestServiceCreate(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			service := New(test.repo)
-			post, err := service.Create(ui, test.body)
+			post, err := service.Create(int(ui.ID), test.body)
 
 			assert.Equal(t, test.err, err)
 			assert.Equal(t, test.result, post)
