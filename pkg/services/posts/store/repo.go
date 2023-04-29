@@ -3,7 +3,6 @@ package store
 import (
 	"blog/pkg/services/posts"
 	"blog/pkg/services/users"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -67,17 +66,12 @@ func (p *postRepo) GetAll() ([]posts.Posts, error) {
 
 //Create method repository
 func (p *postRepo) Create(authorId int, body string) (uint, error) {
-	fmt.Println(authorId)
-	fmt.Println(body)
 	post := posts.Posts{
 		AuthorID: authorId,
 		Body:     body,
 	}
-	//fmt.Println(post)
 	tx := p.DB.Create(&post)
-	fmt.Println(tx)
 	if tx.Error != nil {
-		//fmt.Println(tx.Error)
 		return post.ID, posts.ErrPostCreate
 	}
 	return post.ID, nil

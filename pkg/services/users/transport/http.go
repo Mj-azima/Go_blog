@@ -100,6 +100,14 @@ func (h *handler) register(c *fiber.Ctx) error {
 		return err
 	}
 
+	u, err := h.UserService.GetByEmail(payload.Email)
+	if err != nil {
+		return err
+	}
+	if u.ID != 0 {
+		return c.Redirect("/register")
+	}
+
 	//Generate hash from password
 	passwd, err := cryptography.GenerateFromPassword([]byte(payload.Password), 10)
 	if err != nil {

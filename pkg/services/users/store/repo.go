@@ -43,9 +43,9 @@ func (u *userRepo) GetByEmail(email string) (users.Users, error) {
 	var user users.Users
 
 	if err := u.DB.Find(&user, "email = ?", email).Error; err != nil {
+
 		return user, users.ErrUserNotFound
 	}
-
 	return user, nil
 }
 
@@ -59,6 +59,12 @@ func (u *userRepo) GetAll() ([]users.Users, error) {
 }
 
 func (u *userRepo) Create(email string, password []byte) (uint, error) {
+	if email == "" {
+		return 0, users.ErrUserCreate
+	}
+	if password == nil {
+		return 0, users.ErrUserCreate
+	}
 	user := users.Users{
 		Email:    email,
 		Password: password,
